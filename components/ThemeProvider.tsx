@@ -6,19 +6,11 @@ import {
   createContext,
   ReactNode,
   useCallback,
-  useContext,
   useEffect,
-  useState,
+  useState
 } from 'react'
 
 const ThemeTransitionContext = createContext<ThemeCtx | null>(null)
-
-export const useThemeTransition = () => {
-	const ctx = useContext(ThemeTransitionContext)
-	if (!ctx)
-		throw new Error('useThemeTransition must be used within ThemeProvider')
-	return ctx
-}
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
 	return (
