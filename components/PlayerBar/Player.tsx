@@ -11,7 +11,8 @@ const PlayerBar = () => {
 	const pathname = usePathname()
 
 	if (!src) return null
-	if (pathname === '/' && isLive) return null
+	if (pathname === '/' && isLive)
+		return <VolumeBar className='fixed bottom-8 right-8' />
 	return (
 		<div
 			className={`fixed flex sm:bottom-8 bottom-0 bg-white invert dark:bg-transparent dark:backdrop-blur-xs justify-center ${isLive ? 'sm:max-w-1/3' : 'sm:max-w-2/3'} transition-all duration-300 m-auto sm:h-24 left-0 right-0 z-50`}
