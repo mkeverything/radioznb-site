@@ -1,13 +1,13 @@
 'use client'
 
 import {
-	createContext,
-	FC,
-	PropsWithChildren,
-	useContext,
-	useEffect,
-	useRef,
-	useState,
+  createContext,
+  FC,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
 } from 'react'
 import { useLivestreamStatus } from './hooks/useLivestreamStatus'
 
@@ -165,13 +165,17 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 	)
 }
 
+export const stream: Stream = {
+	src: 'https://server.radioznb.ru/listen/radioznb-live/radio.mp3',
+	title: 'радио зимы не будет',
+	isLive: true,
+}
+
 const defaultState: PlayerContextType = {
-	src: '',
-	title: '',
+  ...stream,
 	isPlaying: false,
 	timecode: 0,
 	duration: 0,
-	isLive: true,
 	setIsLive: () => {},
 	play: () => {},
 	pause: () => {},
@@ -201,16 +205,10 @@ const getLocalStorageContext = (): PlayerContextType => {
 	return defaultState
 }
 
-export const stream: Stream = {
-	src: 'https://server.radioznb.ru/listen/radioznb-live/radio.mp3',
-	title: 'радио зимы не будет',
-	isLive: true,
-}
-
 export type Stream = {
 	src: string
 	title: string
-	isLive?: boolean
+	isLive: boolean
 }
 
 type PlayerContextType = {
