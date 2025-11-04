@@ -24,7 +24,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 	const audioRef = useRef<HTMLAudioElement | null>(null)
 
 	useEffect(() => {
-		const saved = getLocalStorageContext()
+		const saved = getLocalStorageContext('player-context')
 
 		setSrc(saved.src)
 		setTitle(saved.title)
@@ -195,9 +195,9 @@ const PlayerContext = createContext<PlayerContextType>(defaultState)
 
 export const usePlayer = () => useContext(PlayerContext)
 
-const getLocalStorageContext = (): PlayerContextType => {
+export const getLocalStorageContext = (ctx: string): PlayerContextType => {
 	try {
-		const raw = localStorage.getItem('player-context')
+		const raw = localStorage.getItem(ctx)
 		if (raw) {
 			return { ...defaultState, ...JSON.parse(raw) }
 		}
