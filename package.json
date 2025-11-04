@@ -1,7 +1,6 @@
 {
-	"name": "znb",
-	"version": "0.2.0",
-	"private": true,
+	"name": "radio-znb",
+	"version": "0.2.1",
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",
