@@ -14,8 +14,8 @@ const VolumeBar: FC<{ className?: string }> = ({ className }) => {
 	}
 
 	return (
-		<div className={className}>
-			<div className={`relative max-lg:hidden`}>
+		<div className={`${className} ml-4 max-lg:hidden`}>
+			<div className={`relative`}>
 				{visible && (
 					<input
 						type='range'

@@ -15,9 +15,9 @@ const PlayerBar = () => {
 		return <VolumeBar className='fixed bottom-8 right-8' />
 	return (
 		<div
-			className={`fixed flex sm:bottom-8 bottom-0 bg-white invert dark:bg-transparent dark:backdrop-blur-xs justify-center ${isLive ? 'sm:max-w-1/3' : 'sm:max-w-2/3'} transition-all duration-300 m-auto sm:h-24 left-0 right-0 z-50`}
+			className={`fixed flex bottom-0 bg-white invert dark:bg-transparent dark:backdrop-blur-xs justify-center w-full transition-all duration-300 m-auto left-0 right-0 z-50`}
 		>
-			<div className='flex relative w-full max-sm:flex-col-reverse items-center h-full p-4 sm:px-8 sm:gap-4 gap-2'>
+			<div className='flex relative w-full max-sm:flex-col-reverse sm:items-center items-start h-full p-2 sm sm:px-8 sm:gap-4'>
 				<Controls />
 				<ProgressBar />
 				<VolumeBar />
