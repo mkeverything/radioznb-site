@@ -22,6 +22,11 @@ const TapePlayer = () => {
 	const toggle = (playing: boolean, stream: Stream) =>
 		playing ? pause() : play(stream)
 
+	const onToggle = () =>
+		isLive
+			? toggle(isPlayingArchive, randomArchiveStream)
+			: toggle(isPlayingLive, stream)
+
 	return (
 		<div
 			className='sm:w-2xl w-xl relative'
@@ -45,11 +50,7 @@ const TapePlayer = () => {
 					alt='antenna'
 				/>
 				<div
-					onClick={() =>
-						isLive
-							? toggle(isPlayingArchive, randomArchiveStream)
-							: toggle(isPlayingLive, stream)
-					}
+					onClick={onToggle}
 					className='h-1/4 absolute top-16 right-2/5 left-2/7 cursor-pointer z-20'
 				/>
 				<Image
