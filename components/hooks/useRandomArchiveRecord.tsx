@@ -18,6 +18,7 @@ const useRandomArchiveStream = (): Stream => {
 	return {
 		src: randomRec ? randomRec.fileUrl : '',
 		title: randomRec ? randomRec.episodeTitle : '',
+    isLive: false
 	}
 }
 
