@@ -9,7 +9,7 @@ import {
 	useRef,
 	useState,
 } from 'react'
-import { useLivestreamStatus } from './hooks/useLivestreamStatus'
+import { Livestream, useLivestreamStatus } from './hooks/useLivestreamStatus'
 
 export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 	const [src, setSrc] = useState('')
@@ -17,15 +17,16 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [timecode, setTimecode] = useState(defaultState.timecode)
 	const [duration, setDuration] = useState(defaultState.duration)
-	const [isLive, setIsLive] = useState(defaultState.isLive)
 	const [volume, setVolume] = useState(defaultState.volume)
 	const livestream = useLivestreamStatus()
+	const [isLive, setIsLive] = useState(!!livestream?.is_live)
 	const ctx = isLive ? 'player-context' : 'archive-context'
 
 	const audioRef = useRef<HTMLAudioElement | null>(null)
 
 	useEffect(() => {
 		const saved = getLocalStorageContext(ctx)
+		console.log(saved)
 
 		if (!saved) return
 
@@ -50,7 +51,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 				volume,
 			})
 		)
-	}, [src, title, duration, isLive, isPlaying, timecode, volume, ctx])
+	}, [ctx, duration, isLive, isPlaying, src, timecode, title, volume])
 
 	useEffect(() => {
 		if (!audioRef.current) {
@@ -94,7 +95,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 			audio.removeEventListener('pause', onPause)
 			audio.removeEventListener('ended', onEnded)
 		}
-	}, [isLive])
+	}, [])
 
 	useEffect(() => {
 		const audio = audioRef.current
@@ -223,7 +224,7 @@ export type Stream = {
 	timecode?: number
 }
 
-type PlayerContextType = {
+export type PlayerContextType = {
 	src: string
 	title: string
 	isPlaying: boolean
@@ -237,12 +238,5 @@ type PlayerContextType = {
 	seek: (time: number) => void
 	volume: number
 	setVolume: (vol: number) => void
-	livestream:
-		| {
-				art: string | null
-				broadcast_start: number | null
-				is_live: boolean
-				streamer_name: string
-		  }
-		| undefined
+	livestream: Livestream
 }

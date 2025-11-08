@@ -8,6 +8,7 @@ import useRandomArchiveStream from './hooks/useRandomArchiveRecord'
 
 const TapePlayer = () => {
 	const {
+		src,
 		isPlaying: playing,
 		isLive,
 		play,
@@ -25,6 +26,8 @@ const TapePlayer = () => {
 		isLive
 			? toggle(isPlayingArchive, randomArchiveStream)
 			: toggle(isPlayingLive, stream)
+
+	const onPlay = () => (!src ? play(randomArchiveStream) : togglePlay())
 
 	return (
 		<div
@@ -75,7 +78,7 @@ const TapePlayer = () => {
 				/>
 				<LiveIndicator />
 				<div
-					onClick={togglePlay}
+					onClick={onPlay}
 					className='h-1/3 aspect-square absolute bottom-10 w-auto left-[41%] cursor-pointer z-10'
 				/>
 				<Image

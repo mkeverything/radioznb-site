@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
 
-export const useLivestreamStatus = () => {
+export const useLivestreamStatus = (): Livestream => {
 	const [livestream, setLivestream] = useState(undefined)
 
 	const ws = useWebSocket(
@@ -48,3 +48,12 @@ export const useLivestreamStatus = () => {
 
 	return livestream
 }
+
+export type Livestream =
+	| {
+			art: string | null
+			broadcast_start: number | null
+			is_live: boolean
+			streamer_name: string
+	  }
+	| undefined
