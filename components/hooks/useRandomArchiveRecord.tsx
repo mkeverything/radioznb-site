@@ -1,8 +1,10 @@
 import { getRecordings } from '@/lib/actions'
 import { useQuery } from '@tanstack/react-query'
-import { Stream } from '../PlayerContext'
+import { getLocalStorageContext, Stream } from '../PlayerContext'
 
 const useRandomArchiveStream = (): Stream => {
+	const local = getLocalStorageContext('archive-context')
+
 	const { data: randomRec } = useQuery({
 		queryKey: ['recordings', 'random'],
 		queryFn: async () => {
@@ -13,12 +15,14 @@ const useRandomArchiveStream = (): Stream => {
 			}
 			return undefined
 		},
+		enabled: !local,
 	})
 
 	return {
-		src: randomRec ? randomRec.fileUrl : '',
-		title: randomRec ? randomRec.episodeTitle : '',
-    isLive: false
+		src: local ? local.src : randomRec?.fileUrl || '',
+		title: local ? local.title : randomRec?.episodeTitle || '',
+		isLive: false,
+		timecode: local?.timecode,
 	}
 }
 

@@ -16,7 +16,6 @@ const TapePlayer = () => {
 	} = usePlayer()
 	const isPlayingLive = playing && isLive
 	const isPlayingArchive = playing && !isLive
-
 	const randomArchiveStream = useRandomArchiveStream()
 
 	const toggle = (playing: boolean, stream: Stream) =>

@@ -1,13 +1,13 @@
 'use client'
 
 import {
-  createContext,
-  FC,
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
+	createContext,
+	FC,
+	PropsWithChildren,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
 } from 'react'
 import { useLivestreamStatus } from './hooks/useLivestreamStatus'
 
@@ -20,11 +20,14 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 	const [isLive, setIsLive] = useState(defaultState.isLive)
 	const [volume, setVolume] = useState(defaultState.volume)
 	const livestream = useLivestreamStatus()
+	const ctx = isLive ? 'player-context' : 'archive-context'
 
 	const audioRef = useRef<HTMLAudioElement | null>(null)
 
 	useEffect(() => {
-		const saved = getLocalStorageContext('player-context')
+		const saved = getLocalStorageContext(ctx)
+
+		if (!saved) return
 
 		setSrc(saved.src)
 		setTitle(saved.title)
@@ -32,11 +35,11 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 		setDuration(saved.duration)
 		setIsLive(saved.isLive)
 		setVolume(saved.volume)
-	}, [])
+	}, [ctx])
 
 	useEffect(() => {
 		localStorage.setItem(
-			'player-context',
+			ctx,
 			JSON.stringify({
 				src,
 				title,
@@ -47,7 +50,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 				volume,
 			})
 		)
-	}, [src, title, duration, isLive, isPlaying, timecode, volume])
+	}, [src, title, duration, isLive, isPlaying, timecode, volume, ctx])
 
 	useEffect(() => {
 		if (!audioRef.current) {
@@ -91,7 +94,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 			audio.removeEventListener('pause', onPause)
 			audio.removeEventListener('ended', onEnded)
 		}
-	}, [])
+	}, [isLive])
 
 	useEffect(() => {
 		const audio = audioRef.current
@@ -99,18 +102,24 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 		audio.volume = volume
 	}, [volume])
 
-	const play = async ({ src: newSrc, title, isLive = false }: PlayOptions) => {
+	const play = async ({
+		src: newSrc,
+		title,
+		isLive = false,
+		timecode: storedTimecode,
+	}: Stream) => {
 		const audio = audioRef.current
 		if (!audio) return
 		audio.pause()
 		if (isLive) {
-			audio.currentTime = 0
 			audio.src = newSrc
 		} else {
-			if (src === newSrc) audio.currentTime = timecode
 			if (audio.src !== newSrc) {
 				audio.src = newSrc
 			}
+			if (storedTimecode) {
+				audio.currentTime = storedTimecode
+			} else if (src === newSrc) audio.currentTime = timecode
 		}
 		setIsLive(isLive)
 		setTitle(title)
@@ -172,7 +181,7 @@ export const stream: Stream = {
 }
 
 const defaultState: PlayerContextType = {
-  ...stream,
+	...stream,
 	isPlaying: false,
 	timecode: 0,
 	duration: 0,
@@ -195,20 +204,23 @@ const PlayerContext = createContext<PlayerContextType>(defaultState)
 
 export const usePlayer = () => useContext(PlayerContext)
 
-export const getLocalStorageContext = (ctx: string): PlayerContextType => {
+export const getLocalStorageContext = (
+	ctx: string
+): PlayerContextType | undefined => {
 	try {
 		const raw = localStorage.getItem(ctx)
 		if (raw) {
-			return { ...defaultState, ...JSON.parse(raw) }
+			return { ...JSON.parse(raw) }
 		}
 	} catch {}
-	return defaultState
+	return undefined
 }
 
 export type Stream = {
 	src: string
 	title: string
 	isLive: boolean
+	timecode?: number
 }
 
 type PlayerContextType = {
@@ -219,7 +231,7 @@ type PlayerContextType = {
 	duration: number
 	isLive: boolean
 	setIsLive: (arg: boolean) => void
-	play: (props: PlayOptions) => void
+	play: (props: Stream) => void
 	pause: () => void
 	toggle: () => void
 	seek: (time: number) => void
@@ -233,10 +245,4 @@ type PlayerContextType = {
 				streamer_name: string
 		  }
 		| undefined
-}
-
-type PlayOptions = {
-	src: string
-	title: string
-	isLive?: boolean
 }
