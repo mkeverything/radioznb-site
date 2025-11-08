@@ -26,7 +26,6 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
 	useEffect(() => {
 		const saved = getLocalStorageContext(ctx)
-		console.log(saved)
 
 		if (!saved) return
 
