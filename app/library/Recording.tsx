@@ -1,5 +1,6 @@
 "use client";
 
+import { Stream } from "@/components/PlayerContext";
 import { Program, Recording } from "@/db/schema";
 
 export default function RecordingComponent({
@@ -7,7 +8,7 @@ export default function RecordingComponent({
   play,
 }: {
   rec: { recordings: Recording; programs: Program | null };
-  play: (props: { src: string; title: string }) => void;
+  play: (props: Stream) => void;
 }) {
   if (!rec.recordings.fileUrl) return null;
   return (
@@ -17,6 +18,7 @@ export default function RecordingComponent({
         play({
           title: `${rec.programs?.name} – ${rec.recordings.episodeTitle}`,
           src: rec.recordings.fileUrl,
+          isLive: false
         });
       }}
       className="text-left py-1 hover:underline"
