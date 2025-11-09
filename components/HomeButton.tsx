@@ -6,8 +6,8 @@ const HomeButton = () => (
 		<Image
 			src='/assets/logo.png'
 			className='size-full'
-			height={64}
-			width={64}
+			height={640}
+			width={640}
 			alt='logo'
 		/>
 	</Link>

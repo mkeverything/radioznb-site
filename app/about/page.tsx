@@ -21,8 +21,8 @@ const Page = async () => {
 				<Link href='https://t.me/radi0ZnB'>
 					<Image
 						className='size-24 hover:scale-105 transition-all'
-						width={12}
-						height={12}
+						width={166}
+						height={150}
 						src='/assets/tg.png'
 						alt='telegram'
 					/>
