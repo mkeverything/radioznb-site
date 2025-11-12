@@ -1,23 +1,23 @@
 'use server'
 
 import { db } from '@/db'
-import { revalidatePath } from 'next/cache'
-import { eq, and } from 'drizzle-orm'
 import {
-	users,
-	sessions,
-	people,
-	programs,
-	genres,
-	recordings,
-	recordingGenres,
-	recordingPeople,
-	RecordingInsert,
-	ProgramInsert,
-	PersonInsert,
-	UserInsert,
 	GenreInsert,
+	genres,
+	people,
+	PersonInsert,
+	ProgramInsert,
+	programs,
+	recordingGenres,
+	RecordingInsert,
+	recordingPeople,
+	recordings,
+	sessions,
+	UserInsert,
+	users,
 } from '@/db/schema'
+import { and, desc, eq } from 'drizzle-orm'
+import { revalidatePath } from 'next/cache'
 
 // ============================================================================
 // types
@@ -319,7 +319,7 @@ export async function getProgramBySlug(slug: string) {
 			.select()
 			.from(programs)
 			.where(eq(programs.slug, slug))
-      .leftJoin(people, eq(programs.hostId, people.id))
+			.leftJoin(people, eq(programs.hostId, people.id))
 		return program ?? undefined
 	} catch (error) {
 		console.error(error)
@@ -520,6 +520,7 @@ export async function getPublishedRecordingsByProgramId(programId: string) {
 			)
 		)
 		.leftJoin(programs, eq(recordings.programId, programs.id))
+		.orderBy(desc(recordings.addedAt))
 }
 
 export async function getRecordingsByStatus(status: 'published' | 'hidden') {
@@ -760,5 +761,20 @@ export async function getRecordingsForPerson(personId: string) {
 			error:
 				error instanceof Error ? error.message : 'failed to fetch recordings',
 		}
+	}
+}
+
+export async function getNewRecordings() {
+	try {
+		return await db
+			.select()
+			.from(recordings)
+			.where(and(eq(recordings.status, 'published')))
+      .innerJoin(programs, eq(recordings.programId, programs.id))
+			.orderBy(desc(recordings.releaseDate))
+			.limit(10)
+	} catch (error) {
+		console.error(error)
+		throw error
 	}
 }

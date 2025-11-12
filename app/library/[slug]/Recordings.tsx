@@ -16,24 +16,19 @@ const Recordings: FC<{ programId: string }> = ({ programId }) => {
 	})
 	const { play } = usePlayer()
 
-	if (!recordings) return null
-	const sorted = recordings
-		?.slice()
-		.sort(
-			(a, b) => b.recordings.addedAt.valueOf() - a.recordings.addedAt.valueOf()
-		)
-
-	if (!sorted)
+	if (!recordings)
 		return (
 			<Container className='h-16 w-full animate-pulse opacity-50'>
 				загрузка...
 			</Container>
 		)
-	if (!sorted.length) return null
+	if (!recordings.length) return null
+
+	console.log(recordings[0].recordings.type)
 
 	return (
 		<Container>
-			{sorted.map((rec) => (
+			{recordings.map((rec) => (
 				<RecordingComponent key={rec.recordings.id} rec={rec} play={play} />
 			))}
 		</Container>

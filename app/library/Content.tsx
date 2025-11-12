@@ -4,6 +4,8 @@ import Card from '@/components/Card'
 import { getPrograms } from '@/lib/actions'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
+import NewRecordings from './NewRecordings'
+import FlexContainer from '@/components/FlexContainer'
 
 const PageContent = () => {
 	const {
@@ -21,16 +23,23 @@ const PageContent = () => {
 	if (isError || !programs || !programs) return <div>error</div>
 
 	return (
-		<div className={`flex flex-wrap h-full gap-2 items-start min-w-1/3`}>
-			{programs.data?.map(({ programs: { id, name, slug } }) => (
-				<button
-					key={id}
-					onClick={() => router.push(`/library/${slug}`)}
-					className={`hover:underline text-left`}
-				>
-					<Card className='flex items-end'>{name}</Card>
-				</button>
-			))}
+		<div className={`flex flex-col gap-4`}>
+			<span>Недавние выпуски:</span>
+			<FlexContainer>
+				<NewRecordings />
+			</FlexContainer>
+			<span>Все передачи:</span>
+			<FlexContainer>
+				{programs.data?.map(({ programs: { id, name, slug } }) => (
+					<button
+						key={id}
+						onClick={() => router.push(`/library/${slug}`)}
+						className={`hover:underline`}
+					>
+						<Card className='flex items-center font-bold justify-center rounded-full'>{name}</Card>
+					</button>
+				))}
+			</FlexContainer>
 		</div>
 	)
 }
