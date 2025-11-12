@@ -319,12 +319,11 @@ export async function getProgramBySlug(slug: string) {
 			.select()
 			.from(programs)
 			.where(eq(programs.slug, slug))
-		return { success: true, data: program }
+      .leftJoin(people, eq(programs.hostId, people.id))
+		return program ?? undefined
 	} catch (error) {
-		return {
-			success: false,
-			error: error instanceof Error ? error.message : 'failed to fetch program',
-		}
+		console.error(error)
+		throw error
 	}
 }
 
