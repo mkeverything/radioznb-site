@@ -14,7 +14,7 @@ const NewRecordings = () => {
 
 	if (!data) return null
 	return (
-		<div className='flex flex-wrap gap-2'>
+		<div className='grid grid-cols-3 md:grid-cols-7 sm:grid-cols-5 w-full gap-2'>
 			{data.map((rec) => (
 				<button
 					key={rec.recordings.id}
@@ -28,10 +28,10 @@ const NewRecordings = () => {
 				>
 					<Card
 						key={rec.recordings.id}
-						className='flex flex-col rounded-md justify-end items-start text-left'
+						className='flex flex-col rounded-md text-left gap-1 grow w-full h-full'
 					>
-						<span className='font-bold'>{rec.programs.name}</span>
-						<span>{rec.recordings.episodeTitle}</span>
+						<span className='font-bold text-xs'>{rec.programs.name}</span>
+						<span className='line-clamp-4'>{rec.recordings.episodeTitle}</span>
 					</Card>
 				</button>
 			))}

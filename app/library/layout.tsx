@@ -3,9 +3,12 @@ import { FC, PropsWithChildren } from 'react'
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
 	return (
-		<div className='flex gap-16'>
+		<div className='flex flex-col'>
 			<HomeButton />
-			{children}
+			<div className='flex'>
+				<div className='w-64 h-full max-sm:hidden'></div>
+				{children}
+			</div>
 		</div>
 	)
 }

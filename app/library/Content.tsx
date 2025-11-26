@@ -5,7 +5,6 @@ import { getPrograms } from '@/lib/actions'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import NewRecordings from './NewRecordings'
-import FlexContainer from '@/components/FlexContainer'
 
 const PageContent = () => {
 	const {
@@ -24,22 +23,22 @@ const PageContent = () => {
 
 	return (
 		<div className={`flex flex-col gap-4`}>
-			<span>Недавние выпуски:</span>
-			<FlexContainer>
-				<NewRecordings />
-			</FlexContainer>
-			<span>Все передачи:</span>
-			<FlexContainer>
+			<span className='text-xl font-semibold'>новые выпуски</span>
+			<NewRecordings />
+			<span className='text-xl font-semibold'>все передачи</span>
+			<div className='grid grid-cols-4 md:grid-cols-7 sm:grid-cols-5 w-full gap-4'>
 				{programs.data?.map(({ programs: { id, name, slug } }) => (
 					<button
 						key={id}
 						onClick={() => router.push(`/library/${slug}`)}
 						className={`hover:underline`}
 					>
-						<Card className='flex items-center font-bold justify-center rounded-full'>{name}</Card>
+						<Card className='flex items-center font-bold justify-center rounded-full'>
+							{name}
+						</Card>
 					</button>
 				))}
-			</FlexContainer>
+			</div>
 		</div>
 	)
 }
