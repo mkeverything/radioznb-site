@@ -14,7 +14,7 @@ const NewRecordings = () => {
 
 	if (!data) return null
 	return (
-		<div className='grid grid-cols-3 md:grid-cols-7 sm:grid-cols-5 w-full gap-2'>
+		<div className='grid grid-cols-3 lg:grid-cols-9 md:grid-cols-7 sm:grid-cols-5 w-full gap-2'>
 			{data.map((rec) => (
 				<button
 					key={rec.recordings.id}
