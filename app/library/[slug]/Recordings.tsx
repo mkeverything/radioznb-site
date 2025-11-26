@@ -24,8 +24,6 @@ const Recordings: FC<{ programId: string }> = ({ programId }) => {
 		)
 	if (!recordings.length) return null
 
-	console.log(recordings[0].recordings.type)
-
 	return (
 		<Container>
 			{recordings.map((rec) => (
