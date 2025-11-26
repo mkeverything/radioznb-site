@@ -17,7 +17,7 @@ export default function RootLayout({
         <QueryProvider>
           <PlayerContextProvider>
             <ThemeProvider>
-              <div className="sm:px-16 p-6">{children}</div>
+              <div className="sm:px-8 p-4">{children}</div>
               <PlayerBar />
               <BackgroundImage />
             </ThemeProvider>
