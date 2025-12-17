@@ -2,6 +2,8 @@ import HomeButton from '@/components/HomeButton'
 import Image from 'next/image'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 const Page = async () => {
 	const request = await fetch(
 		'http://185.185.143.221/api/station/radioznb-live',
