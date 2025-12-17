@@ -22,7 +22,7 @@ export const useLivestreamStatus = (): Livestream => {
 		const fetchData = async () => {
 			try {
 				const response = await fetch(
-					'https://server.radioznb.ru/api/nowplaying_static/radioznb-live.json'
+					'http://185.185.143.221/api/nowplaying_static/radioznb-live.json'
 				)
 				if (!response.ok) throw new Error('Network response was not ok')
 				const data = await response.json()
