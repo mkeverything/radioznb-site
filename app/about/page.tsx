@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 const Page = async () => {
 	const request = await fetch(
-		'http://185.185.143.221/api/station/radioznb-live',
+		'https://server.radioznb.ru/api/station/radioznb-live',
 		{
 			headers: {
 				Authorization: `Bearer ${process.env.NEXT_PUBLIC_RADIOZNB_API_KEY}`,

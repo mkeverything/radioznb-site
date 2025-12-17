@@ -175,7 +175,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 }
 
 export const stream: Stream = {
-	src: 'http://185.185.143.221/listen/radioznb-live/radio.mp3',
+	src: 'https://server.radioznb.ru/listen/radioznb-live/radio.mp3',
 	title: 'радио зимы не будет',
 	isLive: true,
 }
