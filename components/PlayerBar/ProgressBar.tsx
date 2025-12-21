@@ -22,9 +22,9 @@ const ProgressBar = () => {
 				onChange={(e) => seek(Number(e.target.value))}
 				className={`
 				w-full
-				h-1
+				h-0.5
 				appearance-none
-				dark:accent-white accent-black ${inputExtraStyles}`}
+        ${inputExtraStyles}`}
 			/>
 
 			<div className='flex w-full text-xs opacity-30 justify-between'>
@@ -39,7 +39,8 @@ const inputExtraStyles = `
   /* Track styling (MUST include bg color) */
   [&::-webkit-slider-runnable-track]:h-0.5
   [&::-webkit-slider-runnable-track]:rounded-full
-  [&::-webkit-slider-runnable-track]:bg-white dark:bg-black
+  [&::-webkit-slider-runnable-track]:bg-black
+  dark:[&::-webkit-slider-runnable-track]:bg-white
   [&::-moz-range-track]:h-1
   [&::-moz-range-track]:rounded-full
   /* Thumb styling */
