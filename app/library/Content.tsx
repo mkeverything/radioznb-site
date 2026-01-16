@@ -5,6 +5,7 @@ import { getPrograms } from '@/lib/actions'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import NewRecordings from './NewRecordings'
+import Featured from './Featured'
 
 const PageContent = () => {
 	const {
@@ -23,6 +24,7 @@ const PageContent = () => {
 
 	return (
 		<div className={`flex flex-col gap-4`}>
+			<Featured />
 			<span className='text-xl font-semibold'>новые выпуски</span>
 			<NewRecordings />
 			<span className='text-xl font-semibold'>все передачи</span>
