@@ -11,7 +11,7 @@ export const ProgramCircle: FC<
 		>
 			<Image
 				className='absolute inset-0 z-0'
-				src='/assets/new/circle.png'
+				src='/assets/circle.png'
 				width={1215}
 				height={1254}
 				alt={'circle'}
@@ -33,7 +33,7 @@ export const RecordSquare: FC<
 		>
 			<Image
 				className='absolute inset-0 z-0'
-				src='/assets/new/square.png'
+				src='/assets/square.png'
 				width={1215}
 				height={1254}
 				alt={'circle'}
