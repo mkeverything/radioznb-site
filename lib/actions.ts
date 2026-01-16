@@ -772,7 +772,7 @@ export async function getNewRecordings() {
 			.where(and(eq(recordings.status, 'published')))
       .innerJoin(programs, eq(recordings.programId, programs.id))
 			.orderBy(desc(recordings.releaseDate))
-			.limit(9)
+			.limit(5)
 	} catch (error) {
 		console.error(error)
 		throw error

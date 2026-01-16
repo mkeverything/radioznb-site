@@ -1,6 +1,6 @@
 'use client'
 
-import Card from '@/components/Card'
+import { ProgramCircle } from '@/components/Cards'
 import { getPrograms } from '@/lib/actions'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
@@ -26,16 +26,16 @@ const PageContent = () => {
 			<span className='text-xl font-semibold'>новые выпуски</span>
 			<NewRecordings />
 			<span className='text-xl font-semibold'>все передачи</span>
-			<div className='grid grid-cols-4 lg:grid-cols-9 md:grid-cols-7 sm:grid-cols-5 w-full gap-4'>
+			<div className='grid grid-cols-3 lg:grid-cols-7 md:grid-cols-5 sm:grid-cols-4 w-full gap-4'>
 				{programs.data?.map(({ programs: { id, name, slug } }) => (
 					<button
 						key={id}
 						onClick={() => router.push(`/library/${slug}`)}
 						className={`hover:underline`}
 					>
-						<Card className='flex items-center font-bold justify-center rounded-full'>
+						<ProgramCircle className='flex items-center font-bold justify-center rounded-full'>
 							{name}
-						</Card>
+						</ProgramCircle>
 					</button>
 				))}
 			</div>
