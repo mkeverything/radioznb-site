@@ -31,13 +31,13 @@ const TapePlayer = () => {
 
 	return (
 		<div
-			className='sm:w-2xl w-xl relative'
+			className='sm:w-3xl w-2xl relative'
 			onDragStart={(e) => e.preventDefault()}
 		>
 			<WaveAnimation />
-			<div className='relative w-full h-full'>
+			<div className='relative size-full'>
 				<Image
-					className='relative inset-0 z-10'
+					className='relative inset-0'
 					src='/assets/tape-player/main.png'
 					alt='player'
 					width={1366}
@@ -63,7 +63,7 @@ const TapePlayer = () => {
 					alt='title-radio'
 				/>
 				<Image
-					className='absolute top-[24.5%] scale-x-90 scale-y-120 sm:left-[40%] left-[40.5%] sm:h-8 h-7 w-auto'
+					className='absolute top-[25.5%] scale-x-90 scale-y-120 sm:left-[40%] left-[40.5%] sm:h-8 h-7 w-auto'
 					src={`/assets/tape-player/toggle${isLive ? 'L' : 'R'}.png`}
 					width={1366}
 					height={768}
