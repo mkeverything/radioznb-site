@@ -31,7 +31,7 @@ const NewRecordings = () => {
 						className='flex flex-col rounded-md justify-end text-left gap-1 grow w-full h-full'
 					>
 						<span className='line-clamp-4'>{rec.recordings.episodeTitle}</span>
-						<span className='font-bold text-xs'>{rec.programs.name}</span>
+						<span className='font-bold uppercase'>{rec.programs.name}</span>
 					</RecordSquare>
 				</button>
 			))}

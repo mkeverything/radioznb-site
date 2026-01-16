@@ -24,7 +24,10 @@ export default function Home() {
 const Desktop: FC<{ className: string }> = ({ className }) => {
 	return (
 		<div className={`flex w-full relative ${className}`}>
-			<Link href={'/about'} className='max-sm:w-1/3 left-8 absolute top-1/2 z-10'>
+			<Link
+				href={'/about'}
+				className='max-sm:w-1/3 left-8 absolute top-1/2 z-10'
+			>
 				<Image
 					src={'/assets/about-us.png'}
 					className='h-64 w-auto hover:scale-105 transition'

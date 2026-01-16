@@ -18,10 +18,10 @@ const Page: FC<{ params: Promise<{ slug: string }> }> = ({ params }) => {
 	return (
 		<div className='flex flex-col w-full gap-2'>
 			<div className='pl-4'>
-				<div className='text-2xl font-bold'>{programs.name}</div>
+				<div className='text-3xl font-bold'>{programs.name}</div>
 				{programs.description}
 				{people?.name && (
-					<div className='opacity-30'>передачу ведёт {people.name}</div>
+					<div className='opacity-30 text-xl'>передачу ведёт {people.name}</div>
 				)}
 			</div>
 			<Recordings programId={programs.id} />
