@@ -45,7 +45,7 @@ const TapePlayer = () => {
 					priority
 				/>
 				<Image
-					className={`absolute top-0 origin-[67%_25%] max-sm:scale-x-75 transition-transform duration-700 ease-in-out ${isPlayingLive && 'rotate-45'}`}
+					className={`absolute top-0 origin-[67%_25%] max-sm:scale-x-75 pointer-events-none transition-transform duration-700 ease-in-out ${isPlayingLive && 'rotate-45'}`}
 					src={'/assets/tape-player/antenna.png'}
 					width={1366}
 					height={768}

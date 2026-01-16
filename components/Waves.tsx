@@ -22,11 +22,11 @@ const WaveAnimation: FC<PropsWithChildren> = ({ children }) => {
 
 	if (!isPlaying || !isLive) return children
 	return (
-		<>
+		<div className='pointer-events-none'>
 			<WavesLeft src={src.left} />
 			{children}
 			<WavesRight src={src.right} />
-		</>
+		</div>
 	)
 }
 
