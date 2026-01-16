@@ -6,7 +6,7 @@ export const RecordSquare: FC<
 > = ({ className, children, ...props }) => {
 	return (
 		<div
-			className={`text-wrap whitespace-break-spaces text-[16px] aspect-square text-black p-4 relative ${className}`}
+			className={`text-wrap whitespace-break-spaces sm:text-[16px] text-sm aspect-square text-black p-4 relative ${className}`}
 			{...props}
 		>
 			<Image
@@ -16,7 +16,7 @@ export const RecordSquare: FC<
 				height={1254}
 				alt={'circle'}
 			/>
-			<div className='drop-shadow-[0_0_1px_white] py-2'>{children}</div>
+			<div className='drop-shadow-[0_0_1px_white] sm:p-2'>{children}</div>
 		</div>
 	)
 }
