@@ -10,6 +10,8 @@ const PlayerBar = () => {
 	const { src, isLive } = usePlayer()
 	const pathname = usePathname()
 
+  console.log(src)
+
 	if (!src) return null
 	if (pathname === '/' && isLive)
 		return <VolumeBar className='fixed bottom-8 right-8' />

@@ -154,6 +154,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 		<PlayerContext.Provider
 			value={{
 				src,
+        setSrc,
 				title,
 				isPlaying,
 				timecode,
@@ -185,6 +186,7 @@ const defaultState: PlayerContextType = {
 	isPlaying: false,
 	timecode: 0,
 	duration: 0,
+  setSrc: () => {},
 	setIsLive: () => {},
 	play: () => {},
 	pause: () => {},
@@ -230,6 +232,7 @@ export type PlayerContextType = {
 	timecode: number
 	duration: number
 	isLive: boolean
+  setSrc: (stream: string) => void
 	setIsLive: (arg: boolean) => void
 	play: (props: Stream) => void
 	pause: () => void
