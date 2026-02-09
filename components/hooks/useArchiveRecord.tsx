@@ -2,7 +2,7 @@ import { getRecordings } from '@/lib/actions'
 import { useQuery } from '@tanstack/react-query'
 import { getLocalStorageContext, Stream } from '../PlayerContext'
 
-const useRandomArchiveStream = (): Stream => {
+const useArchiveStream = (): Stream => {
 	const storedContext = getLocalStorageContext('archive-context')
 
 	const { data: randomRec } = useQuery({
@@ -24,4 +24,4 @@ const useRandomArchiveStream = (): Stream => {
 	return { src, title, isLive: false, timecode }
 }
 
-export default useRandomArchiveStream
+export default useArchiveStream
