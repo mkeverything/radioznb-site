@@ -7,19 +7,14 @@ import WaveAnimation from "./Waves"
 import useArchiveStream from "./hooks/useArchiveRecord"
 
 const TapePlayer = () => {
-  const {
-    setSrc,
-    isPlaying: playing,
-    isLive,
-    setIsLive,
-    play,
-    pause,
-  } = usePlayer()
-  const isPlayingLive = playing && isLive
-  const isPlayingArchive = playing && !isLive
+  const { setSrc, isPlaying, isLive, setIsLive, play, pause, readyState } =
+    usePlayer()
+  const isPlayingLive = isPlaying && isLive
+  const isPlayingArchive = isPlaying && !isLive
   const { src } = useArchiveStream()
 
   const onClick = () => {
+    if (isPlaying && readyState < 3) return
     if (isPlayingLive) {
       pause()
       setSrc(src)
