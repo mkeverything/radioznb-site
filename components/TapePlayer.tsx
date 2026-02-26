@@ -60,7 +60,7 @@ const TapePlayer = () => {
         />
         <LiveIndicator />
         <Image
-          className={`absolute bottom-[33%] left-[42.5%] size-5 ${isPlayingArchive && "animate-spin"}`}
+          className={`absolute bottom-[33%] left-[42.5%] z-10 size-5 ${isPlayingArchive && "animate-spin"}`}
           src={"/assets/tape-player/gear-l.png"}
           width={1366}
           height={768}
