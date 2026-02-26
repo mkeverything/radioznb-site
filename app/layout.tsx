@@ -1,11 +1,11 @@
+import { BackgroundImage } from '@/components/BackgroundImage'
 import PlayerBar from '@/components/PlayerBar/Player'
 import { PlayerContextProvider } from '@/components/PlayerContext'
+import QueryProvider from '@/components/QueryProvider'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import type { Metadata } from 'next'
-import './globals.css'
-import { BackgroundImage } from '@/components/BackgroundImage'
-import QueryProvider from '@/components/QueryProvider'
 import localFont from 'next/font/local'
+import './globals.css'
 
 export default function RootLayout({
 	children,
@@ -13,7 +13,7 @@ export default function RootLayout({
 	children: React.ReactNode
 }>) {
 	return (
-		<html lang='en' className={myFont.className} suppressHydrationWarning>
+		<html lang='en' className={radioFont.className} suppressHydrationWarning>
 			<body className='mb-34'>
 				<QueryProvider>
 					<PlayerContextProvider>
@@ -46,6 +46,6 @@ export const metadata: Metadata = {
 	},
 }
 
-const myFont = localFont({
-	src: '../public/fonts/znb-regular.ttf',
+const radioFont = localFont({
+	src: '../public/fonts/znb.otf',
 })
