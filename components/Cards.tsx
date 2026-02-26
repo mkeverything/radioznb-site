@@ -2,9 +2,13 @@ import Image from "next/image"
 import { FC, HTMLAttributes, PropsWithChildren } from "react"
 
 export const RecordSquare: FC<
-  { className?: string; squareVariant?: number } & PropsWithChildren &
+  {
+    className?: string
+    squareVariant?: number
+    type?: "live" | "podcast"
+  } & PropsWithChildren &
     HTMLAttributes<HTMLDivElement>
-> = ({ className, children, squareVariant, ...props }) => {
+> = ({ className, children, squareVariant, type, ...props }) => {
   const src = squareVariant
     ? SQUARES[Math.min(squareVariant, SQUARES.length - 1)]
     : getRandomAsset(SQUARES)
@@ -20,6 +24,15 @@ export const RecordSquare: FC<
         height={1254}
         alt={"square"}
       />
+      {type === "podcast" && (
+        <Image
+          className="absolute top-4 right-4 z-20 size-4 mix-blend-difference"
+          src="/assets/podcast.png"
+          width={24}
+          height={24}
+          alt="podcast"
+        />
+      )}
       <div className="drop-shadow-[0_0_1px_white] sm:p-2">{children}</div>
     </div>
   )
