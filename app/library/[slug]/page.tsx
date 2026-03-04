@@ -2,6 +2,7 @@
 
 import { getProgramBySlug } from '@/lib/actions'
 import { useQuery } from '@tanstack/react-query'
+import Link from 'next/link'
 import { FC, use } from 'react'
 import Recordings from './Recordings'
 
@@ -18,6 +19,12 @@ const Page: FC<{ params: Promise<{ slug: string }> }> = ({ params }) => {
 	return (
 		<div className='flex flex-col w-full gap-2'>
 			<div className='pl-4'>
+				<Link
+					href='/library'
+					className='mb-2 inline-block text-sm opacity-70 hover:underline hover:opacity-100'
+				>
+					← все передачи
+				</Link>
 				<div className='text-3xl font-bold'>{programs.name}</div>
 				{programs.description}
 				{people?.name && (

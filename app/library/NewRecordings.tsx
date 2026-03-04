@@ -2,7 +2,7 @@
 
 import { RecordSquare } from "@/components/Cards"
 import { usePlayer } from "@/components/PlayerContext"
-import { getNewRecordings } from "@/lib/actions"
+import { getFeaturedPodcast, getNewRecordings } from "@/lib/actions"
 import { useQuery } from "@tanstack/react-query"
 
 const NewRecordings = () => {
@@ -10,12 +10,19 @@ const NewRecordings = () => {
     queryKey: ["newRecordings"],
     queryFn: getNewRecordings,
   })
+  const { data: featured } = useQuery({
+    queryKey: ["featuredPodcast"],
+    queryFn: getFeaturedPodcast,
+  })
   const { play } = usePlayer()
 
-  if (!data) return null
+  const featuredId = featured?.recordings.id
+  const recordings = data?.filter((rec) => rec.recordings.id !== featuredId)
+
+  if (!recordings?.length) return null
   return (
     <div className="grid w-full grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7">
-      {data.map((rec) => (
+      {recordings.map((rec) => (
         <button
           key={rec.recordings.id}
           onClick={() => {
