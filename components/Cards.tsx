@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { FC, HTMLAttributes, PropsWithChildren } from "react"
+import { FC, HTMLAttributes, PropsWithChildren, useMemo } from "react"
 
 export const RecordSquare: FC<
   {
@@ -9,9 +9,13 @@ export const RecordSquare: FC<
   } & PropsWithChildren &
     HTMLAttributes<HTMLDivElement>
 > = ({ className, children, squareVariant, type, ...props }) => {
-  const src = squareVariant
-    ? SQUARES[Math.min(squareVariant, SQUARES.length - 1)]
-    : getRandomAsset(SQUARES)
+  const src = useMemo(
+    () =>
+      squareVariant
+        ? SQUARES[Math.min(squareVariant, SQUARES.length - 1)]
+        : getRandomAsset(SQUARES),
+    [squareVariant],
+  )
   return (
     <div
       className={`relative aspect-square p-4 text-sm text-wrap whitespace-break-spaces text-black sm:text-[16px] ${className}`}
@@ -42,9 +46,13 @@ export const ProgramCircle: FC<
   { className?: string; circleVariant?: number } & PropsWithChildren &
     HTMLAttributes<HTMLDivElement>
 > = ({ className, children, circleVariant, ...props }) => {
-  const src = circleVariant
-    ? CIRCLES[Math.min(circleVariant, CIRCLES.length - 1)]
-    : getRandomAsset(CIRCLES)
+  const src = useMemo(
+    () =>
+      circleVariant
+        ? CIRCLES[Math.min(circleVariant, CIRCLES.length - 1)]
+        : getRandomAsset(CIRCLES),
+    [circleVariant],
+  )
   return (
     <div
       className={`relative aspect-square size-28 p-2 text-[15px] text-wrap whitespace-break-spaces text-black ${className}`}
