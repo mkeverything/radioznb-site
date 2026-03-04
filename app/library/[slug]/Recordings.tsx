@@ -1,6 +1,7 @@
 'use client'
 
 import { usePlayer } from '@/components/PlayerContext'
+import RadioLoading from '@/components/RadioLoading'
 import { FC, PropsWithChildren } from 'react'
 import { getPublishedRecordingsByProgramId } from '@/lib/actions'
 import { useQuery } from '@tanstack/react-query'
@@ -19,7 +20,7 @@ const Recordings: FC<{ programId: string }> = ({ programId }) => {
 	if (!recordings)
 		return (
 			<Container className='h-16 w-full animate-pulse opacity-50'>
-				загрузка...
+				<RadioLoading/>
 			</Container>
 		)
 	if (!recordings.length) return null

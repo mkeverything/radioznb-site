@@ -3,6 +3,7 @@
 import { ProgramCircle } from "@/components/Cards"
 import { getPrograms, getRandomRecording } from "@/lib/actions"
 import { usePlayer } from "@/components/PlayerContext"
+import RadioLoading from "@/components/RadioLoading"
 import { useQuery } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import NewRecordings from "./NewRecordings"
@@ -38,7 +39,7 @@ const PageContent = () => {
     }
   }
 
-  if (isLoading) return <div>loading...</div>
+  if (isLoading) return <RadioLoading />
   if (isError || !programs || !programs) return <div>error</div>
 
   return (
