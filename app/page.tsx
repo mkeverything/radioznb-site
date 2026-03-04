@@ -58,25 +58,27 @@ const Desktop: FC<{ className: string }> = ({ className }) => {
 const Mobile: FC<{ className: string }> = ({ className }) => {
 	return (
 		<div className={`flex w-full h-full flex-col relative ${className}`}>
-			<Link href={'/about'} className='absolute top-4 left-8'>
-				<Image
-					src={'/assets/about-us-mobile.png'}
-					className='h-32 w-auto hover:scale-105 transition'
-					height={1816}
-					width={2762}
-					alt='about-us'
-				/>
-			</Link>
-			<Link href={'/library'} className='absolute top-8 right-0'>
-				<Image
-					src={'/assets/tapes-mobile.png'}
-					className='h-56 w-auto hover:scale-105 transition'
-					height={3107}
-					width={3734}
-					alt='tapes'
-				/>
-			</Link>
-			<div className='flex w-[175%] -left-[36%] absolute bottom-14 justify-center'>
+			<div className='absolute inset-x-0 top-12 flex items-start justify-between gap-3 px-4'>
+				<Link href={'/about'} className='w-[42%] max-w-42.5'>
+					<Image
+						src={'/assets/about-us-mobile.png'}
+						className='h-auto w-full transition hover:scale-105'
+						height={1816}
+						width={2762}
+						alt='about-us'
+					/>
+				</Link>
+				<Link href={'/library'} className='mt-24 w-[50%] max-w-55'>
+					<Image
+						src={'/assets/tapes-mobile.png'}
+						className='h-auto w-full transition hover:scale-105'
+						height={3107}
+						width={3734}
+						alt='tapes'
+					/>
+				</Link>
+			</div>
+			<div className='flex w-[175%] -left-[36%] absolute bottom-14 mt-16 justify-center'>
 				<TapePlayer />
 			</div>
 		</div>
