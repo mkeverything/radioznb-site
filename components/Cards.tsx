@@ -30,7 +30,7 @@ export const RecordSquare: FC<
       />
       {type === "podcast" && (
         <Image
-          className="absolute top-4 right-4 z-20 size-4 mix-blend-difference"
+          className="absolute top-4 right-4 z-20 size-6 mix-blend-difference"
           src="/assets/podcast.png"
           width={24}
           height={24}

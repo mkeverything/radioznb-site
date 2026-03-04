@@ -1,28 +1,46 @@
-import { RecordSquare } from '@/components/Cards'
-import Link from 'next/link'
-import { FC } from 'react'
+"use client"
 
-const Featured: FC = () => {
-	return (
-		<div className='w-full'>
-			<div className='text-4xl'>премьера</div>
-			<div className='flex w-full'>
-				<Link href='/'>
-					<div className='relative hover:scale-105 transition-all'>
-						<span className='sm:text-4xl text-2xl absolute h-full inset-0 flex items-center p-4 break-all line-clamp-4 uppercase invert z-10'>
-							название в четыре константинополя
-						</span>
-						<RecordSquare className='w-42 sm:w-64'></RecordSquare>
-					</div>
-				</Link>
-				<span className='text-wrap break-all sm:text-2xl text-xl max-w-1/2'>
-					это не очень длинное однако какое-никакое описание этой премьерной
-					передачи. или подкаста. или репортажа. или микстейпа. или чего ещё
-					похлеще
-				</span>
-			</div>
-		</div>
-	)
+import { RecordSquare } from "@/components/Cards"
+import { usePlayer } from "@/components/PlayerContext"
+import { getFeaturedPodcast } from "@/lib/actions"
+import { useQuery } from "@tanstack/react-query"
+import Link from "next/link"
+
+const Featured = () => {
+  const { data: featured, isError } = useQuery({
+    queryKey: ["featuredPodcast"],
+    queryFn: getFeaturedPodcast,
+  })
+
+  if (isError || !featured) return null
+
+  const description = featured.recordings.description?.trim()
+  const fallbackDescription = `${featured.programs.name} – ${featured.recordings.episodeTitle}`
+
+  const { play } = usePlayer()
+
+  return (
+    <div className="flex w-full flex-col gap-4">
+      <div className="text-4xl">премьера</div>
+      <div className="flex w-full gap-4">
+        <Link href={`/library/${featured.programs.slug}`}>
+          <div className="relative transition-all hover:scale-105">
+            <div className="absolute inset-0 z-10 line-clamp-4 flex h-full flex-col items-start justify-between p-6 break-all uppercase invert sm:text-4xl">
+              <span className="text-xl">
+                {featured.recordings.episodeTitle}
+              </span>
+              <span className="text-2xl">{featured.programs.name}</span>
+            </div>
+            <RecordSquare type="podcast" className="w-32 sm:w-48" />
+          </div>
+        </Link>
+        <span className="max-w-1/2 text-xl text-wrap break-all sm:text-2xl"></span>
+        <span className="max-w-1/2 text-xl text-wrap break-all sm:text-2xl">
+          {description || fallbackDescription}
+        </span>
+      </div>
+    </div>
+  )
 }
 
 export default Featured

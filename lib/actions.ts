@@ -16,7 +16,7 @@ import {
   UserInsert,
   users,
 } from "@/db/schema"
-import { and, desc, eq } from "drizzle-orm"
+import { and, desc, eq, gte } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
 // ============================================================================
@@ -786,6 +786,32 @@ export async function getNewRecordings() {
       .innerJoin(programs, eq(recordings.programId, programs.id))
       .orderBy(desc(recordings.releaseDate))
       .limit(5)
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
+
+export async function getFeaturedPodcast() {
+  try {
+    const monthAgo = new Date()
+    monthAgo.setMonth(monthAgo.getMonth() - 1)
+
+    const [featured] = await db
+      .select()
+      .from(recordings)
+      .where(
+        and(
+          eq(recordings.status, "published"),
+          eq(recordings.type, "podcast"),
+          gte(recordings.releaseDate, monthAgo),
+        ),
+      )
+      .innerJoin(programs, eq(recordings.programId, programs.id))
+      .orderBy(desc(recordings.releaseDate))
+      .limit(1)
+
+    return featured ?? null
   } catch (error) {
     console.error(error)
     throw error
