@@ -21,7 +21,7 @@ const NewRecordings = () => {
 
   if (!recordings?.length) return null
   return (
-    <div className="grid w-full grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7">
+    <div className="grid w-full grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
       {recordings.map((rec) => (
         <button
           key={rec.recordings.id}
@@ -36,10 +36,16 @@ const NewRecordings = () => {
           <RecordSquare
             key={rec.recordings.id}
             type={rec.recordings.type}
-            className="flex h-full w-full grow flex-col justify-end gap-1 rounded-md text-left"
+            className="flex h-full w-full grow gap-1 rounded-md text-left"
           >
-            <span className="line-clamp-2">{rec.recordings.episodeTitle}</span>
-            <span className="font-bold uppercase">{rec.programs.name}</span>
+            <div className="flex size-full flex-col justify-between">
+              <span className="line-clamp-2">
+                {rec.recordings.episodeTitle}
+              </span>
+              <span className="line-clamp-2 font-bold uppercase">
+                {rec.programs.name}
+              </span>
+            </div>
           </RecordSquare>
         </button>
       ))}
