@@ -25,9 +25,14 @@ const PageContent = () => {
   const handleShuffle = async () => {
     const random = await getRandomRecording()
     if (random?.recordings) {
+      const programName = random.programs?.name
+      const title = programName
+        ? `${programName} – ${random.recordings.episodeTitle}`
+        : random.recordings.episodeTitle
+
       play({
         src: random.recordings.fileUrl,
-        title: random.recordings.episodeTitle,
+        title,
         isLive: false,
       })
     }
