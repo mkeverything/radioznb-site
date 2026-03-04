@@ -47,15 +47,19 @@ const PageContent = () => {
       <Featured />
       <span className="text-xl font-semibold">новые выпуски</span>
       <NewRecordings />
-      <div className="flex items-center gap-2">
+      <div className="flex h-fit items-center gap-2">
         <span className="text-xl font-semibold">все передачи</span>
-        <button onClick={handleShuffle} title="random">
+        <button
+          onClick={handleShuffle}
+          title="random"
+          className="translate-y-1"
+        >
           <Image
             src="/assets/shuffle.png"
             alt="shuffle"
             width={24}
             height={24}
-            className="size-5"
+            className="size-6"
           />
         </button>
       </div>
