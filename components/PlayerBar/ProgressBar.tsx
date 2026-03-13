@@ -1,38 +1,34 @@
-'use client'
+"use client"
 
-import { formatTime } from './Player'
-import { usePlayer } from '../PlayerContext'
-import PlayerBarWavesAnimation from './Waves'
+import { formatTime } from "./Player"
+import { usePlayer } from "../PlayerContext"
+import PlayerBarWavesAnimation from "./Waves"
 
 const ProgressBar = () => {
-	const { title, timecode, duration, seek, isLive, isPlaying } = usePlayer()
+  const { title, timecode, duration, seek, isLive, isPlaying } = usePlayer()
 
-	if (isLive) return <PlayerBarWavesAnimation playing={isPlaying} />
+  if (isLive) return <PlayerBarWavesAnimation playing={isPlaying} />
 
-	return (
-		<div className='w-full h-fit flex flex-col min-w-0 justify-center gap-1'>
-			<div className='truncate text-lg'>{title}</div>
+  return (
+    <div className="flex h-fit w-full min-w-0 flex-col justify-center gap-1">
+      <div className="truncate text-lg uppercase">{title}</div>
 
-			<input
-				type='range'
-				min={0}
-				max={duration}
-				step={0.1}
-				value={timecode}
-				onChange={(e) => seek(Number(e.target.value))}
-				className={`
-				w-full
-				h-0.5
-				appearance-none
-        ${inputExtraStyles}`}
-			/>
+      <input
+        type="range"
+        min={0}
+        max={duration}
+        step={0.1}
+        value={timecode}
+        onChange={(e) => seek(Number(e.target.value))}
+        className={`h-0.5 w-full appearance-none ${inputExtraStyles}`}
+      />
 
-			<div className='flex w-full text-xs opacity-30 justify-between'>
-				<div>{formatTime(timecode)}</div>
-				<div>{formatTime(duration)}</div>
-			</div>
-		</div>
-	)
+      <div className="flex w-full justify-between text-xs opacity-30">
+        <div>{formatTime(timecode)}</div>
+        <div>{formatTime(duration)}</div>
+      </div>
+    </div>
+  )
 }
 
 const inputExtraStyles = `

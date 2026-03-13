@@ -81,7 +81,7 @@ const Mobile: FC<{ className: string }> = ({ className }) => {
           />
         </Link>
       </div>
-      <div className="absolute bottom-14 -left-[36%] mt-16 flex w-[175%] justify-center">
+      <div className="absolute right-0 bottom-24 left-0 mx-auto mt-16 flex w-full justify-center">
         <TapePlayer />
       </div>
     </div>

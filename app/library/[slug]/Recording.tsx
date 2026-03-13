@@ -21,7 +21,7 @@ export default function RecordingComponent({
           isLive: false
         });
       }}
-      className="text-left text-xl py-1 hover:underline"
+      className="text-right text-2xl hover:underline"
     >
       {rec.recordings.episodeTitle}
     </button>

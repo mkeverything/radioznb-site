@@ -24,7 +24,7 @@ const TapePlayer = () => {
 
   return (
     <div
-      className="relative w-xl sm:w-2xl"
+      className="relative min-w-md sm:w-2xl"
       onDragStart={(e) => e.preventDefault()}
     >
       <WaveAnimation />
