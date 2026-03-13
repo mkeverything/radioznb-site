@@ -29,13 +29,13 @@ const Desktop: FC<{ className: string }> = ({ className }) => {
     <div className={`relative flex w-full ${className}`}>
       <Link
         href={"/about"}
-        className="absolute top-1/2 left-8 z-15 max-sm:w-1/3"
+        className="absolute bottom-0 left-16 z-15 max-sm:w-1/3 lg:left-32"
       >
         <Image
           src={"/assets/about-us.png"}
-          className="h-64 w-auto transition hover:scale-105"
-          height={5906}
-          width={5906}
+          className="h-46 w-auto transition hover:scale-105"
+          height={4216}
+          width={4216}
           alt="about-us"
         />
       </Link>
@@ -44,13 +44,13 @@ const Desktop: FC<{ className: string }> = ({ className }) => {
       </div>
       <Link
         href={"/library"}
-        className="absolute top-1/4 -right-8 z-15 max-sm:w-1/3"
+        className="absolute right-20 -bottom-16 z-15 max-sm:w-1/3 lg:right-40"
       >
         <Image
           src={"/assets/tapes.png"}
-          className="h-108 w-auto transition hover:scale-105"
-          height={5906}
-          width={5906}
+          className="h-42 w-auto transition hover:scale-105"
+          height={2301}
+          width={2301}
           alt="tapes"
         />
       </Link>
