@@ -19,7 +19,7 @@ const NewRecordings: FC<{
   if (!recordings) return null
 
   return (
-    <div className="grid w-full grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+    <div className="grid w-full grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
       {recordings.map((rec) => (
         <button
           key={rec.recordings.id}
@@ -37,12 +37,10 @@ const NewRecordings: FC<{
             className="flex h-full w-full grow gap-1 rounded-md text-left"
           >
             <div className="flex size-full flex-col justify-between">
-              <span className="line-clamp-2">
+              <span className="line-clamp-2 sm:line-clamp-3 md:line-clamp-2 lg:line-clamp-4">
                 {rec.recordings.episodeTitle}
               </span>
-              <span className="line-clamp-2 font-bold uppercase">
-                {rec.programs.name}
-              </span>
+              <span className="uppercase">{rec.programs.name}</span>
             </div>
           </RecordSquare>
         </button>

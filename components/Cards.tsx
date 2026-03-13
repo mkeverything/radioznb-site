@@ -18,7 +18,7 @@ export const RecordSquare: FC<
   )
   return (
     <div
-      className={`relative aspect-square p-4 text-sm text-wrap whitespace-break-spaces text-black sm:text-[16px] ${className}`}
+      className={`relative aspect-square p-4 text-sm sm:text-base md:text-lg text-wrap whitespace-break-spaces text-black ${className}`}
       {...props}
     >
       <Image
@@ -30,7 +30,7 @@ export const RecordSquare: FC<
       />
       {type === "podcast" && (
         <Image
-          className="absolute top-4 right-4 z-20 size-6 mix-blend-difference"
+          className="absolute top-4 right-4 z-20 size-8 mix-blend-difference"
           src="/assets/podcast.png"
           width={24}
           height={24}
@@ -55,7 +55,7 @@ export const ProgramCircle: FC<
   )
   return (
     <div
-      className={`relative aspect-square size-28 p-2 text-[15px] text-wrap whitespace-break-spaces text-black ${className}`}
+      className={`relative aspect-square sm:size-32 p-2 sm:text-lg size-28 text-wrap whitespace-break-spaces text-black ${className}`}
       {...props}
     >
       <Image

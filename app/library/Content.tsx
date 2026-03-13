@@ -75,7 +75,7 @@ const PageContent = () => {
           />
         </button>
       </div>
-      <div className="grid w-full grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7">
+      <div className="grid w-full grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
         {programs.data?.map(({ programs: { id, name, slug } }) => (
           <button
             key={id}
