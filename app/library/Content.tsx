@@ -1,23 +1,36 @@
 "use client"
 
 import { ProgramCircle } from "@/components/Cards"
-import { getPrograms, getRandomRecording } from "@/lib/actions"
 import { usePlayer } from "@/components/PlayerContext"
 import RadioLoading from "@/components/RadioLoading"
+import {
+  getFeaturedPodcast,
+  getNewRecordings,
+  getPrograms,
+  getRandomRecording,
+} from "@/lib/actions"
 import { useQuery } from "@tanstack/react-query"
-import { useRouter } from "next/navigation"
-import NewRecordings from "./NewRecordings"
-import Featured from "./Featured"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import Featured from "./Featured"
+import NewRecordings from "./NewRecordings"
 
 const PageContent = () => {
   const {
     data: programs,
-    isLoading,
+    isLoading: isLoadingPrograms,
     isError,
   } = useQuery({
     queryKey: ["programs"],
     queryFn: getPrograms,
+  })
+  const { data: newRecordings, isLoading: isLoadingRecordings } = useQuery({
+    queryKey: ["newRecordings"],
+    queryFn: getNewRecordings,
+  })
+  const { data: featured, isLoading: isLoadingFeatured } = useQuery({
+    queryKey: ["featuredPodcast"],
+    queryFn: getFeaturedPodcast,
   })
 
   const router = useRouter()
@@ -39,21 +52,20 @@ const PageContent = () => {
     }
   }
 
+  const isLoading =
+    isLoadingPrograms || isLoadingRecordings || isLoadingFeatured
+
   if (isLoading) return <RadioLoading />
   if (isError || !programs || !programs) return <div>error</div>
 
   return (
     <div className={`flex flex-col gap-4`}>
-      <Featured />
-      <span className="text-xl font-semibold">новые выпуски</span>
-      <NewRecordings />
+      <Featured featured={featured} />
+      <span className="text-xl font-semibold uppercase">новые выпуски</span>
+      <NewRecordings featured={featured} newRecordings={newRecordings} />
       <div className="flex h-fit items-center gap-2">
-        <span className="text-xl font-semibold">все передачи</span>
-        <button
-          onClick={handleShuffle}
-          title="random"
-          className="translate-y-1"
-        >
+        <span className="text-xl font-semibold uppercase">все передачи</span>
+        <button onClick={handleShuffle} title="random">
           <Image
             src="/assets/shuffle.png"
             alt="shuffle"

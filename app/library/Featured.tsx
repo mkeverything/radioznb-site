@@ -2,17 +2,14 @@
 
 import { RecordSquare } from "@/components/Cards"
 import { usePlayer } from "@/components/PlayerContext"
-import { getFeaturedPodcast } from "@/lib/actions"
-import { useQuery } from "@tanstack/react-query"
+import { Program, Recording } from "@/db/schema"
 import Link from "next/link"
+import { FC } from "react"
 
-const Featured = () => {
-  const { data: featured, isError } = useQuery({
-    queryKey: ["featuredPodcast"],
-    queryFn: getFeaturedPodcast,
-  })
-
-  if (isError || !featured) return null
+const Featured: FC<{
+  featured?: { recordings: Recording; programs: Program }
+}> = ({ featured }) => {
+  if (!featured) return null
 
   const description = featured.recordings.description?.trim()
   const fallbackDescription = `${featured.programs.name} – ${featured.recordings.episodeTitle}`
@@ -46,9 +43,7 @@ const Featured = () => {
           </div>
         </button>
         <span className="max-w-1/2 text-xl text-wrap break-all sm:text-2xl">
-          <Link
-            href={`/library/${featured.programs.slug}`}
-          >
+          <Link href={`/library/${featured.programs.slug}`}>
             {description || fallbackDescription}{" "}
           </Link>
         </span>
