@@ -31,7 +31,7 @@ const TapePlayer = () => {
       <div className="relative h-full w-full">
         <div
           onClick={onClick}
-          className="absolute inset-0 z-100 m-auto h-[80%] w-[60%] cursor-pointer"
+          className="absolute z-100 m-auto h-[80%] w-[60%] cursor-pointer max-sm:inset-0 sm:top-20 sm:left-44 sm:h-[20%] sm:w-[15%]"
         />
         <Image
           className="relative inset-0 z-10"
