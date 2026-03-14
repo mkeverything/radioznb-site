@@ -1,12 +1,21 @@
 import { relations } from "drizzle-orm/relations";
-import { people, programs, genres, recordingGenres, recordings, recordingPeople, user, session } from "./schema";
+import { programs, recordings, people, genres, recordingGenres, recordingPeople, user, session } from "./schema";
+
+export const recordingsRelations = relations(recordings, ({one, many}) => ({
+	program: one(programs, {
+		fields: [recordings.programId],
+		references: [programs.id]
+	}),
+	recordingGenres: many(recordingGenres),
+	recordingPeople: many(recordingPeople),
+}));
 
 export const programsRelations = relations(programs, ({one, many}) => ({
+	recordings: many(recordings),
 	person: one(people, {
 		fields: [programs.hostId],
 		references: [people.id]
 	}),
-	recordings: many(recordings),
 }));
 
 export const peopleRelations = relations(people, ({many}) => ({
@@ -27,15 +36,6 @@ export const recordingGenresRelations = relations(recordingGenres, ({one}) => ({
 
 export const genresRelations = relations(genres, ({many}) => ({
 	recordingGenres: many(recordingGenres),
-}));
-
-export const recordingsRelations = relations(recordings, ({one, many}) => ({
-	recordingGenres: many(recordingGenres),
-	recordingPeople: many(recordingPeople),
-	program: one(programs, {
-		fields: [recordings.programId],
-		references: [programs.id]
-	}),
 }));
 
 export const recordingPeopleRelations = relations(recordingPeople, ({one}) => ({

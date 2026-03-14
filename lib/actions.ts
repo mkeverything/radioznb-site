@@ -2,20 +2,23 @@
 
 import { db } from "@/db"
 import {
-  GenreInsert,
   genres,
   people,
-  PersonInsert,
-  ProgramInsert,
   programs,
   recordingGenres,
-  RecordingInsert,
   recordingPeople,
   recordings,
   sessions,
-  UserInsert,
   users,
 } from "@/db/schema"
+import {
+  GenreInsert,
+  PersonInsert,
+  ProgramInsert,
+  RecordingInsert,
+  UserInsert,
+} from "@/db/types"
+
 import { and, desc, eq, gte } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
@@ -533,7 +536,7 @@ export async function getPublishedRecordingsByProgramId(programId: string) {
       ),
     )
     .leftJoin(programs, eq(recordings.programId, programs.id))
-    .orderBy(desc(recordings.addedAt))
+    .orderBy(desc(recordings.createdAt))
 }
 
 export async function getRecordingsByStatus(status: "published" | "hidden") {
@@ -804,7 +807,7 @@ export async function getFeaturedPodcast() {
         and(
           eq(recordings.status, "published"),
           eq(recordings.type, "podcast"),
-          gte(recordings.releaseDate, monthAgo),
+          gte(recordings.releaseDate, monthAgo.getTime()),
         ),
       )
       .innerJoin(programs, eq(recordings.programId, programs.id))
