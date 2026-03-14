@@ -18,7 +18,7 @@ export const RecordSquare: FC<
   )
   return (
     <div
-      className={`relative aspect-square p-4 text-sm sm:text-base md:text-lg text-wrap whitespace-break-spaces text-black ${className}`}
+      className={`relative flex aspect-square p-3 text-sm text-wrap whitespace-break-spaces text-black sm:text-base md:text-lg ${className}`}
       {...props}
     >
       <Image
@@ -37,7 +37,9 @@ export const RecordSquare: FC<
           alt="podcast"
         />
       )}
-      <div className="drop-shadow-[0_0_1px_white] sm:p-2">{children}</div>
+      <div className="flex size-full drop-shadow-[0_0_1px_white]">
+        {children}
+      </div>
     </div>
   )
 }
@@ -55,7 +57,7 @@ export const ProgramCircle: FC<
   )
   return (
     <div
-      className={`relative aspect-square sm:size-32 p-2 sm:text-lg size-28 text-wrap whitespace-break-spaces text-black ${className}`}
+      className={`relative aspect-square size-28 p-2 text-wrap whitespace-break-spaces text-black sm:size-32 sm:text-lg ${className}`}
       {...props}
     >
       <Image

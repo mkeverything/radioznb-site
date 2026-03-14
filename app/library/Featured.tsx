@@ -2,7 +2,7 @@
 
 import { RecordSquare } from "@/components/Cards"
 import { usePlayer } from "@/components/PlayerContext"
-import { Program, Recording } from "@/db/schema"
+import { Program, Recording } from "@/db/types"
 import Link from "next/link"
 import { FC } from "react"
 

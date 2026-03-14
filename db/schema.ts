@@ -21,7 +21,7 @@ export const recordings = sqliteTable(
     episodeNumber: integer(),
     seasonNumber: integer(),
     description: text(),
-    type: text().notNull(),
+    type: text("type", { enum: ["live", "podcast"] }).notNull(),
     releaseDate: integer().notNull(),
     duration: integer().notNull(),
     status: text().notNull(),

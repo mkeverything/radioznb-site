@@ -2,7 +2,8 @@
 
 import { RecordSquare } from "@/components/Cards"
 import { usePlayer } from "@/components/PlayerContext"
-import { Program, Recording } from "@/db/schema"
+import { Program, Recording } from "@/db/types"
+import { getRecordingSeasonEpisodeString } from "@/helpers"
 import { FC } from "react"
 
 const NewRecordings: FC<{
@@ -34,13 +35,18 @@ const NewRecordings: FC<{
           <RecordSquare
             key={rec.recordings.id}
             type={rec.recordings.type}
-            className="flex h-full w-full grow gap-1 rounded-md text-left"
+            className="flex"
           >
             <div className="flex size-full flex-col justify-between">
-              <span className="line-clamp-2 sm:line-clamp-3 md:line-clamp-2 lg:line-clamp-4">
+              <span className="line-clamp-2 text-left text-lg sm:line-clamp-3 md:line-clamp-2 lg:line-clamp-4">
                 {rec.recordings.episodeTitle}
               </span>
-              <span className="uppercase">{rec.programs.name}</span>
+              <span className="flex flex-col items-end justify-end text-right uppercase">
+                <span className="flex items-center text-xs">
+                  {getRecordingSeasonEpisodeString(rec.recordings)}
+                </span>
+                <span>{rec.programs.name} </span>
+              </span>
             </div>
           </RecordSquare>
         </button>

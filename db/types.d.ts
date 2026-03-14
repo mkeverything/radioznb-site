@@ -1,3 +1,15 @@
+import { InferInsertModel, InferSelectModel } from "drizzle-orm"
+import {
+  genres,
+  people,
+  programs,
+  recordingGenres,
+  recordingPeople,
+  recordings,
+  sessions,
+  users,
+} from "./schema"
+
 export type User = InferSelectModel<typeof users>
 export type Session = InferSelectModel<typeof sessions>
 export type Person = InferSelectModel<typeof people>

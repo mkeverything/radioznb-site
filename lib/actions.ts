@@ -15,6 +15,7 @@ import {
   GenreInsert,
   PersonInsert,
   ProgramInsert,
+  Recording,
   RecordingInsert,
   UserInsert,
 } from "@/db/types"
