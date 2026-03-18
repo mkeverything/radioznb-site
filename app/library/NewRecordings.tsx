@@ -35,14 +35,14 @@ const NewRecordings: FC<{
         >
           <RecordSquare type={rec.recordings.type} className="flex">
             <div className="flex size-full flex-col justify-between gap-2">
-              <span className="line-clamp-2 text-left text-xs leading-snug font-semibold uppercase sm:text-sm md:text-base">
-                {rec.recordings.episodeTitle}
-              </span>
-              <span className="mt-auto flex flex-col gap-0.5 text-right text-sm lowercase sm:text-base">
-                <span className="h-full truncate">{rec.programs.name}</span>
+              <span className="flex flex-col gap-0.5 text-left text-sm text-wrap uppercase sm:text-base">
+                <span>{rec.programs.name}</span>
                 <span className="leading-tight">
                   {getRecordingSeasonEpisodeString(rec.recordings)}
                 </span>
+              </span>
+              <span className="line-clamp-2 text-right text-xs leading-snug font-semibold uppercase sm:text-sm md:text-base">
+                {rec.recordings.episodeTitle}
               </span>
             </div>
           </RecordSquare>

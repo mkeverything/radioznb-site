@@ -18,7 +18,7 @@ export const RecordSquare: FC<
   )
   return (
     <div
-      className={`relative flex aspect-square p-4 sm:p-6 pb-6 text-wrap whitespace-break-spaces text-black text-xs sm:text-sm md:text-base ${className}`}
+      className={`relative flex aspect-square p-6 pb-6 text-xs text-wrap whitespace-break-spaces text-black sm:p-8 sm:text-sm md:text-base ${className}`}
       {...props}
     >
       <Image
