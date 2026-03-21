@@ -15,7 +15,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "rootDir": "../",
+    "rootDir": ".",
     "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
@@ -37,6 +37,7 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "app/sw.ts"
   ]
 }
