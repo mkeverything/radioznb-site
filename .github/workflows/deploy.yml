@@ -42,6 +42,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: ssh -o BatchMode=yes "${SSH_USER}@${SSH_HOST}" "mkdir -p ~/radioznb"
 
+      # Exclude .env* so rsync --delete does not remove server-only secrets (repo has none; CI would wipe DB creds).
       - name: Rsync application
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
@@ -53,7 +54,9 @@ jobs:
             --exclude '.git' \
             --exclude 'dist' \
             --exclude 'build' \
+            --exclude '.env' \
             --exclude '.env.local' \
+            --exclude '.env.production' \
             --exclude '.DS_Store' \
             ./ "${SSH_USER}@${SSH_HOST}:~/radioznb/"
 
