@@ -1,42 +1,55 @@
-'use client'
+"use client"
 
-import Card from '@/components/Card'
-import { usePlayer } from '@/components/PlayerContext'
-import { getNewRecordings } from '@/lib/actions'
-import { useQuery } from '@tanstack/react-query'
+import { RecordSquare } from "@/components/Cards"
+import { usePlayer } from "@/components/PlayerContext"
+import { Program, Recording } from "@/db/types"
+import { getRecordingSeasonEpisodeString } from "@/helpers"
+import { FC } from "react"
 
-const NewRecordings = () => {
-	const { data } = useQuery({
-		queryKey: ['newRecordings'],
-		queryFn: getNewRecordings,
-	})
-	const { play } = usePlayer()
+const NewRecordings: FC<{
+  featured?: { recordings: Recording; programs: Program }
+  newRecordings?: { recordings: Recording; programs: Program }[]
+}> = ({ featured, newRecordings }) => {
+  const { play } = usePlayer()
 
-	if (!data) return null
-	return (
-		<div className='grid grid-cols-3 lg:grid-cols-9 md:grid-cols-7 sm:grid-cols-5 w-full gap-2'>
-			{data.map((rec) => (
-				<button
-					key={rec.recordings.id}
-					onClick={() => {
-						play({
-							title: `${rec.programs?.name} – ${rec.recordings.episodeTitle}`,
-							src: rec.recordings.fileUrl,
-							isLive: false,
-						})
-					}}
-				>
-					<Card
-						key={rec.recordings.id}
-						className='flex flex-col rounded-md text-left gap-1 grow w-full h-full'
-					>
-						<span className='font-bold text-xs'>{rec.programs.name}</span>
-						<span className='line-clamp-4'>{rec.recordings.episodeTitle}</span>
-					</Card>
-				</button>
-			))}
-		</div>
-	)
+  const featuredId = featured?.recordings.id
+  const recordings = newRecordings?.filter(
+    (rec) => rec.recordings.id !== featuredId,
+  )
+
+  if (!recordings) return null
+
+  return (
+    <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      {recordings.map((rec) => (
+        <button
+          key={rec.recordings.id}
+          className="group w-full text-left focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:outline-none"
+          onClick={() => {
+            play({
+              title: `${rec.programs?.name} – ${rec.recordings.episodeTitle}`,
+              src: rec.recordings.fileUrl,
+              isLive: false,
+            })
+          }}
+        >
+          <RecordSquare type={rec.recordings.type} className="flex">
+            <div className="flex size-full flex-col justify-between gap-2">
+              <span className="flex flex-col gap-0.5 text-left text-sm text-wrap uppercase sm:text-base">
+                <span>{rec.programs.name}</span>
+                <span className="leading-tight">
+                  {getRecordingSeasonEpisodeString(rec.recordings)}
+                </span>
+              </span>
+              <span className="line-clamp-2 text-right text-xs leading-snug font-semibold uppercase sm:text-sm md:text-base">
+                {rec.recordings.episodeTitle}
+              </span>
+            </div>
+          </RecordSquare>
+        </button>
+      ))}
+    </div>
+  )
 }
 
 export default NewRecordings

@@ -24,14 +24,14 @@ const TapePlayer = () => {
 
   return (
     <div
-      className="relative w-xl sm:w-2xl"
+      className="relative min-w-md sm:w-2xl"
       onDragStart={(e) => e.preventDefault()}
     >
       <WaveAnimation />
       <div className="relative h-full w-full">
         <div
           onClick={onClick}
-          className="absolute inset-0 z-100 m-auto h-[80%] w-[60%] cursor-pointer"
+          className="absolute z-100 m-auto h-[80%] w-[60%] cursor-pointer max-sm:inset-0 sm:top-20 sm:left-44 sm:h-[20%] sm:w-[15%]"
         />
         <Image
           className="relative inset-0 z-10"
@@ -60,7 +60,7 @@ const TapePlayer = () => {
         />
         <LiveIndicator />
         <Image
-          className={`absolute bottom-[33%] left-[42.5%] size-5 ${isPlayingArchive && "animate-spin"}`}
+          className={`absolute bottom-[33%] left-[42.5%] z-10 size-5 ${isPlayingArchive && "animate-spin"}`}
           src={"/assets/tape-player/gear-l.png"}
           width={1366}
           height={768}

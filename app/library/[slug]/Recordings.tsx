@@ -1,47 +1,48 @@
-'use client'
+"use client"
 
-import { usePlayer } from '@/components/PlayerContext'
-import { FC, PropsWithChildren } from 'react'
-import { getPublishedRecordingsByProgramId } from '@/lib/actions'
-import { useQuery } from '@tanstack/react-query'
-import RecordingComponent from './Recording'
+import { usePlayer } from "@/components/PlayerContext"
+import RadioLoading from "@/components/RadioLoading"
+import { FC, PropsWithChildren } from "react"
+import { getPublishedRecordingsByProgramId } from "@/lib/actions"
+import { useQuery } from "@tanstack/react-query"
+import RecordingComponent from "./Recording"
 
 const Recordings: FC<{ programId: string }> = ({ programId }) => {
-	const { data: recordings } = useQuery({
-		queryKey: ['recordings', programId],
-		queryFn: async () => {
-			const recs = await getPublishedRecordingsByProgramId(programId)
-			return recs
-		},
-	})
-	const { play } = usePlayer()
+  const { data: recordings } = useQuery({
+    queryKey: ["recordings", programId],
+    queryFn: async () => {
+      const recs = await getPublishedRecordingsByProgramId(programId)
+      return recs
+    },
+  })
+  const { play } = usePlayer()
 
-	if (!recordings)
-		return (
-			<Container className='h-16 w-full animate-pulse opacity-50'>
-				загрузка...
-			</Container>
-		)
-	if (!recordings.length) return null
+  if (!recordings)
+    return (
+      <Container className="h-16 w-full animate-pulse opacity-50">
+        <RadioLoading />
+      </Container>
+    )
+  if (!recordings.length) return null
 
-	return (
-		<Container>
-			{recordings.map((rec) => (
-				<RecordingComponent key={rec.recordings.id} rec={rec} play={play} />
-			))}
-		</Container>
-	)
+  return (
+    <Container>
+      {recordings.map((rec) => (
+        <RecordingComponent key={rec.recordings.id} rec={rec} play={play} />
+      ))}
+    </Container>
+  )
 }
 
 const Container: FC<PropsWithChildren & { className?: string }> = ({
-	children,
-	className,
+  children,
+  className,
 }) => (
-	<div
-		className={`flex flex-col items-start bg-stone-700/50 text-white p-4 w-full ${className}`}
-	>
-		{children}
-	</div>
+  <div
+    className={`flex w-full flex-col items-start bg-stone-700/50 p-4 pb-8 pl-12 text-white ${className}`}
+  >
+    {children}
+  </div>
 )
 
 export default Recordings

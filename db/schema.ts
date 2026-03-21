@@ -1,123 +1,190 @@
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm'
-import { integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import {
+  sqliteTable,
+  AnySQLiteColumn,
+  uniqueIndex,
+  foreignKey,
+  check,
+  text,
+  integer,
+  primaryKey,
+} from "drizzle-orm/sqlite-core"
+import { sql } from "drizzle-orm"
 
-// auth tables
-export const users = sqliteTable('user', {
-	id: text('id')
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
-	username: text('username').notNull(),
-	password: text('password').notNull(),
-	role: text('role', { enum: ['admin', 'user'] })
-		.$onUpdateFn(() => 'user')
-		.notNull(),
-})
+export const recordings = sqliteTable(
+  "recordings",
+  {
+    id: text().primaryKey().notNull(),
+    programId: text()
+      .notNull()
+      .references(() => programs.id),
+    episodeTitle: text().notNull(),
+    episodeNumber: integer(),
+    seasonNumber: integer(),
+    description: text(),
+    type: text("type", { enum: ["live", "podcast"] }).notNull(),
+    releaseDate: integer().notNull(),
+    duration: integer().notNull(),
+    status: text().notNull(),
+    keywords: text(),
+    fileUrl: text().notNull(),
+    createdAt: integer().notNull(),
+  },
+  (table) => [
+    uniqueIndex("recordings_fileUrl_unique").on(table.fileUrl),
+    check(
+      "seasonRequiresEpisode",
+      sql`("recordings"."seasonNumber" is null or "recordings"."episodeNumber" is not null`,
+    ),
+  ],
+)
 
-export const sessions = sqliteTable('session', {
-	sessionToken: text('sessionToken').primaryKey(),
-	userId: text('userId')
-		.notNull()
-		.references(() => users.id, { onDelete: 'cascade' }),
-	expires: integer('expires', { mode: 'timestamp' }).notNull(),
-})
+export const genres = sqliteTable(
+  "genres",
+  {
+    id: text().primaryKey().notNull(),
+    name: text().notNull(),
+  },
+  (table) => [
+    uniqueIndex("genres_name_unique").on(table.name),
+    check(
+      "seasonRequiresEpisode",
+      sql`("recordings"."seasonNumber" is null or "recordings"."episodeNumber" is not null`,
+    ),
+  ],
+)
 
-// application tables
-export const people = sqliteTable('people', {
-	id: text('id')
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
-	name: text('name').notNull(),
-	telegramAccount: text('telegramAccount'),
-	createdAt: integer('createdAt', { mode: 'timestamp' })
-		.$defaultFn(() => new Date())
-		.notNull(),
-})
+export const people = sqliteTable(
+  "people",
+  {
+    id: text().primaryKey().notNull(),
+    name: text().notNull(),
+    telegramAccount: text(),
+    createdAt: integer().notNull(),
+  },
+  (table) => [
+    uniqueIndex("people_telegramAccount_unique").on(table.telegramAccount),
+    uniqueIndex("people_name_unique").on(table.name),
+    check(
+      "seasonRequiresEpisode",
+      sql`("recordings"."seasonNumber" is null or "recordings"."episodeNumber" is not null`,
+    ),
+  ],
+)
 
-export const programs = sqliteTable('programs', {
-	id: text('id')
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
-	name: text('name').notNull(),
-	description: text('description'),
-	hostId: text('hostId').references(() => people.id),
-	slug: text('slug').notNull(),
-	createdAt: integer('createdAt', { mode: 'timestamp' })
-		.$defaultFn(() => new Date())
-		.notNull(),
-})
-
-export const genres = sqliteTable('genres', {
-	id: text('id')
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
-	name: text('name').notNull(),
-})
-
-export const recordings = sqliteTable('recordings', {
-	id: text('id')
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
-	programId: text('programId')
-		.notNull()
-		.references(() => programs.id),
-	episodeTitle: text('episodeTitle').notNull(),
-	description: text('description'),
-	type: text('type', { enum: ['live', 'podcast'] }).notNull(),
-	releaseDate: integer('releaseDate', { mode: 'timestamp' }).notNull(),
-	duration: integer('duration').notNull(),
-	status: text('status', { enum: ['published', 'hidden'] }).notNull(),
-	keywords: text('keywords'),
-	fileUrl: text('fileUrl').notNull(),
-	addedAt: integer('createdAt', { mode: 'timestamp' })
-		.$defaultFn(() => new Date())
-		.notNull(),
-})
+export const programs = sqliteTable(
+  "programs",
+  {
+    id: text().primaryKey().notNull(),
+    name: text().notNull(),
+    description: text(),
+    hostId: text().references(() => people.id),
+    slug: text().notNull(),
+    createdAt: integer().notNull(),
+  },
+  (table) => [
+    uniqueIndex("programs_slug_unique").on(table.slug),
+    uniqueIndex("programs_name_unique").on(table.name),
+    check(
+      "seasonRequiresEpisode",
+      sql`("recordings"."seasonNumber" is null or "recordings"."episodeNumber" is not null`,
+    ),
+  ],
+)
 
 export const recordingGenres = sqliteTable(
-	'recordingGenres',
-	{
-		recordingId: text('recordingId')
-			.notNull()
-			.references(() => recordings.id, { onDelete: 'cascade' }),
-		genreId: text('genreId')
-			.notNull()
-			.references(() => genres.id, { onDelete: 'cascade' }),
-	},
-	(table) => ({
-		pk: primaryKey({ columns: [table.recordingId, table.genreId] }),
-	})
+  "recordingGenres",
+  {
+    recordingId: text()
+      .notNull()
+      .references(() => recordings.id, { onDelete: "cascade" }),
+    genreId: text()
+      .notNull()
+      .references(() => genres.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    primaryKey({
+      columns: [table.recordingId, table.genreId],
+      name: "recordingGenres_recordingId_genreId_pk",
+    }),
+    check(
+      "seasonRequiresEpisode",
+      sql`("recordings"."seasonNumber" is null or "recordings"."episodeNumber" is not null`,
+    ),
+  ],
 )
 
 export const recordingPeople = sqliteTable(
-	'recordingPeople',
-	{
-		recordingId: text('recordingId')
-			.notNull()
-			.references(() => recordings.id, { onDelete: 'cascade' }),
-		personId: text('personId')
-			.notNull()
-			.references(() => people.id, { onDelete: 'cascade' }),
-		role: text('role', { enum: ['host', 'guest'] }).notNull(),
-	},
-	(table) => ({
-		pk: primaryKey({ columns: [table.recordingId, table.personId] }),
-	})
+  "recordingPeople",
+  {
+    recordingId: text()
+      .notNull()
+      .references(() => recordings.id, { onDelete: "cascade" }),
+    personId: text()
+      .notNull()
+      .references(() => people.id, { onDelete: "cascade" }),
+    role: text().notNull(),
+  },
+  (table) => [
+    primaryKey({
+      columns: [table.recordingId, table.personId],
+      name: "recordingPeople_recordingId_personId_pk",
+    }),
+    check(
+      "seasonRequiresEpisode",
+      sql`("recordings"."seasonNumber" is null or "recordings"."episodeNumber" is not null`,
+    ),
+  ],
 )
 
-export type User = InferSelectModel<typeof users>
-export type Session = InferSelectModel<typeof sessions>
-export type Person = InferSelectModel<typeof people>
-export type Program = InferSelectModel<typeof programs>
-export type Genre = InferSelectModel<typeof genres>
-export type Recording = InferSelectModel<typeof recordings>
-export type RecordingGenre = InferSelectModel<typeof recordingGenres>
-export type RecordingPerson = InferSelectModel<typeof recordingPeople>
+export const session = sqliteTable(
+  "session",
+  {
+    sessionToken: text().primaryKey().notNull(),
+    userId: text()
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    expires: integer().notNull(),
+  },
+  (table) => [
+    check(
+      "seasonRequiresEpisode",
+      sql`("recordings"."seasonNumber" is null or "recordings"."episodeNumber" is not null`,
+    ),
+  ],
+)
 
-export type UserInsert = InferInsertModel<typeof users>
-export type SessionInsert = InferInsertModel<typeof sessions>
-export type PersonInsert = InferInsertModel<typeof people>
-export type ProgramInsert = InferInsertModel<typeof programs>
-export type GenreInsert = InferInsertModel<typeof genres>
-export type RecordingInsert = InferInsertModel<typeof recordings>
-export type RecordingGenreInsert = InferInsertModel<typeof recordingGenres>
-export type RecordingPersonInsert = InferInsertModel<typeof recordingPeople>
+export const user = sqliteTable(
+  "user",
+  {
+    id: text().primaryKey().notNull(),
+    username: text().notNull(),
+    password: text().notNull(),
+    role: text().notNull(),
+  },
+  (table) => [
+    check(
+      "seasonRequiresEpisode",
+      sql`("recordings"."seasonNumber" is null or "recordings"."episodeNumber" is not null`,
+    ),
+  ],
+)
+
+// auth tables
+export const users = sqliteTable("user", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  username: text("username").notNull(),
+  password: text("password").notNull(),
+  role: text("role", { enum: ["admin", "user"] })
+    .$onUpdateFn(() => "user")
+    .notNull(),
+})
+
+export const sessions = sqliteTable("session", {
+  sessionToken: text("sessionToken").primaryKey(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  expires: integer("expires", { mode: "timestamp" }).notNull(),
+})

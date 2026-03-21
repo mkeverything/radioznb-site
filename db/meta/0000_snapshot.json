@@ -1,0 +1,552 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "6",
+  "dialect": "sqlite",
+  "tables": {
+    "genres": {
+      "name": "genres",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "genres_name_unique": {
+          "name": "genres_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "seasonEpisodeNumberConsistency": {
+          "name": "seasonEpisodeNumberConsistency",
+          "value": "\"recordings\".\"seasonNumber\" is not null = \"recordings\".\"episodeNumber\" is not null"
+        }
+      }
+    },
+    "people": {
+      "name": "people",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "telegramAccount": {
+          "autoincrement": false,
+          "name": "telegramAccount",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "autoincrement": false,
+          "name": "createdAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "people_telegramAccount_unique": {
+          "name": "people_telegramAccount_unique",
+          "columns": [
+            "telegramAccount"
+          ],
+          "isUnique": true
+        },
+        "people_name_unique": {
+          "name": "people_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "seasonEpisodeNumberConsistency": {
+          "name": "seasonEpisodeNumberConsistency",
+          "value": "\"recordings\".\"seasonNumber\" is not null = \"recordings\".\"episodeNumber\" is not null"
+        }
+      }
+    },
+    "programs": {
+      "name": "programs",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hostId": {
+          "autoincrement": false,
+          "name": "hostId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "slug": {
+          "autoincrement": false,
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "autoincrement": false,
+          "name": "createdAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "programs_slug_unique": {
+          "name": "programs_slug_unique",
+          "columns": [
+            "slug"
+          ],
+          "isUnique": true
+        },
+        "programs_name_unique": {
+          "name": "programs_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "programs_hostId_people_id_fk": {
+          "name": "programs_hostId_people_id_fk",
+          "tableFrom": "programs",
+          "tableTo": "people",
+          "columnsFrom": [
+            "hostId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "seasonEpisodeNumberConsistency": {
+          "name": "seasonEpisodeNumberConsistency",
+          "value": "\"recordings\".\"seasonNumber\" is not null = \"recordings\".\"episodeNumber\" is not null"
+        }
+      }
+    },
+    "recordingGenres": {
+      "name": "recordingGenres",
+      "columns": {
+        "recordingId": {
+          "autoincrement": false,
+          "name": "recordingId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "genreId": {
+          "autoincrement": false,
+          "name": "genreId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "recordingGenres_recordingId_genreId_pk": {
+          "columns": [
+            "recordingId",
+            "genreId"
+          ],
+          "name": "recordingGenres_recordingId_genreId_pk"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "recordingGenres_genreId_genres_id_fk": {
+          "name": "recordingGenres_genreId_genres_id_fk",
+          "tableFrom": "recordingGenres",
+          "tableTo": "genres",
+          "columnsFrom": [
+            "genreId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "recordingGenres_recordingId_recordings_id_fk": {
+          "name": "recordingGenres_recordingId_recordings_id_fk",
+          "tableFrom": "recordingGenres",
+          "tableTo": "recordings",
+          "columnsFrom": [
+            "recordingId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "seasonEpisodeNumberConsistency": {
+          "name": "seasonEpisodeNumberConsistency",
+          "value": "\"recordings\".\"seasonNumber\" is not null = \"recordings\".\"episodeNumber\" is not null"
+        }
+      }
+    },
+    "recordingPeople": {
+      "name": "recordingPeople",
+      "columns": {
+        "recordingId": {
+          "autoincrement": false,
+          "name": "recordingId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "personId": {
+          "autoincrement": false,
+          "name": "personId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "autoincrement": false,
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "recordingPeople_recordingId_personId_pk": {
+          "columns": [
+            "recordingId",
+            "personId"
+          ],
+          "name": "recordingPeople_recordingId_personId_pk"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "recordingPeople_personId_people_id_fk": {
+          "name": "recordingPeople_personId_people_id_fk",
+          "tableFrom": "recordingPeople",
+          "tableTo": "people",
+          "columnsFrom": [
+            "personId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "recordingPeople_recordingId_recordings_id_fk": {
+          "name": "recordingPeople_recordingId_recordings_id_fk",
+          "tableFrom": "recordingPeople",
+          "tableTo": "recordings",
+          "columnsFrom": [
+            "recordingId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "seasonEpisodeNumberConsistency": {
+          "name": "seasonEpisodeNumberConsistency",
+          "value": "\"recordings\".\"seasonNumber\" is not null = \"recordings\".\"episodeNumber\" is not null"
+        }
+      }
+    },
+    "session": {
+      "name": "session",
+      "columns": {
+        "sessionToken": {
+          "autoincrement": false,
+          "name": "sessionToken",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "autoincrement": false,
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires": {
+          "autoincrement": false,
+          "name": "expires",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "session_userId_user_id_fk": {
+          "name": "session_userId_user_id_fk",
+          "tableFrom": "session",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "seasonEpisodeNumberConsistency": {
+          "name": "seasonEpisodeNumberConsistency",
+          "value": "\"recordings\".\"seasonNumber\" is not null = \"recordings\".\"episodeNumber\" is not null"
+        }
+      }
+    },
+    "user": {
+      "name": "user",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "username": {
+          "autoincrement": false,
+          "name": "username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "autoincrement": false,
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "autoincrement": false,
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "seasonEpisodeNumberConsistency": {
+          "name": "seasonEpisodeNumberConsistency",
+          "value": "\"recordings\".\"seasonNumber\" is not null = \"recordings\".\"episodeNumber\" is not null"
+        }
+      }
+    },
+    "recordings": {
+      "name": "recordings",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "programId": {
+          "autoincrement": false,
+          "name": "programId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "episodeTitle": {
+          "autoincrement": false,
+          "name": "episodeTitle",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "episodeNumber": {
+          "autoincrement": false,
+          "name": "episodeNumber",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "seasonNumber": {
+          "autoincrement": false,
+          "name": "seasonNumber",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "autoincrement": false,
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "releaseDate": {
+          "autoincrement": false,
+          "name": "releaseDate",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "duration": {
+          "autoincrement": false,
+          "name": "duration",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "autoincrement": false,
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "keywords": {
+          "autoincrement": false,
+          "name": "keywords",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fileUrl": {
+          "autoincrement": false,
+          "name": "fileUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "autoincrement": false,
+          "name": "createdAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "recordings_fileUrl_unique": {
+          "name": "recordings_fileUrl_unique",
+          "columns": [
+            "fileUrl"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "recordings_programId_programs_id_fk": {
+          "name": "recordings_programId_programs_id_fk",
+          "tableFrom": "recordings",
+          "tableTo": "programs",
+          "columnsFrom": [
+            "programId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "seasonEpisodeNumberConsistency": {
+          "name": "seasonEpisodeNumberConsistency",
+          "value": "\"recordings\".\"seasonNumber\" is not null = \"recordings\".\"episodeNumber\" is not null"
+        }
+      }
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}
