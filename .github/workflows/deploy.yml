@@ -1,0 +1,66 @@
+# Deploy to the VPS (same flow as Makefile: rsync → bun install → build → pm2).
+#
+# Required repo secrets:
+#   SSH_PRIVATE_KEY  — private key for the deploy user (PEM, full multiline)
+#   SSH_HOST         — server hostname or IP (e.g. 176.124.208.218)
+#   SSH_USER         — SSH user (e.g. root)
+#
+# Optional: restrict who can run deploys with branch protection + "Require approval"
+# on a GitHub Environment named e.g. production, then add:
+#   environment: production
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Trust host key
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Ensure remote directory
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: ssh -o BatchMode=yes "${SSH_USER}@${SSH_HOST}" "mkdir -p ~/radioznb"
+
+      - name: Rsync application
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          rsync -avz --delete \
+            --exclude 'node_modules' \
+            --exclude '.next' \
+            --exclude '.git' \
+            --exclude 'dist' \
+            --exclude 'build' \
+            --exclude '.env.local' \
+            --exclude '.DS_Store' \
+            ./ "${SSH_USER}@${SSH_HOST}:~/radioznb/"
+
+      - name: Install, build, restart
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          ssh -o BatchMode=yes "${SSH_USER}@${SSH_HOST}" \
+            "bash -l -c 'cd ~/radioznb && bun install && bun --bun run build && (pm2 restart radioznb || pm2 start ecosystem.config.js)'"
