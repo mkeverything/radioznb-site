@@ -61,7 +61,7 @@ const Desktop: FC<{ className: string }> = ({ className }) => {
 const Mobile: FC<{ className: string }> = ({ className }) => {
   return (
     <div className={`relative flex h-full w-full flex-col ${className}`}>
-      <div className="absolute inset-x-0 top-12 flex items-start justify-between gap-3 px-4">
+      <div className="absolute inset-x-0 z-10 top-12 flex items-start justify-between gap-3 px-4">
         <Link href={"/about"} className="w-[42%] max-w-42.5">
           <Image
             src={"/assets/about-us-mobile.png"}
