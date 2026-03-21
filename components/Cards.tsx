@@ -18,22 +18,22 @@ export const RecordSquare: FC<
   )
   return (
     <div
-      className={`relative flex aspect-square p-6 pb-6 text-xs text-wrap whitespace-break-spaces text-black sm:p-8 sm:text-sm md:text-base ${className}`}
+      className={`relative flex aspect-square p-12 lg:p-6 text-xs text-wrap whitespace-break-spaces text-black sm:text-sm md:text-base ${className}`}
       {...props}
     >
       <Image
         className="absolute inset-0 z-0"
         src={src}
-        width={1215}
-        height={1254}
+        width={553}
+        height={516}
         alt={"square"}
       />
       {type === "podcast" && (
         <Image
-          className="absolute top-4 right-4 z-20 size-8 mix-blend-difference"
+          className="absolute top-2 right-2 z-20 m-4 size-4 mix-blend-difference sm:size-6"
           src="/assets/podcast.png"
-          width={24}
-          height={24}
+          width={124}
+          height={124}
           alt="podcast"
         />
       )}
