@@ -20,7 +20,7 @@ import {
   UserInsert,
 } from "@/db/types"
 
-import { and, desc, eq, gte } from "drizzle-orm"
+import { and, desc, eq, gte, lte } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
 // ============================================================================
@@ -808,7 +808,7 @@ export async function getFeaturedPodcast() {
         and(
           eq(recordings.status, "published"),
           eq(recordings.type, "podcast"),
-          gte(recordings.releaseDate, monthAgo.getTime()),
+          lte(recordings.releaseDate, monthAgo.getTime()),
         ),
       )
       .innerJoin(programs, eq(recordings.programId, programs.id))

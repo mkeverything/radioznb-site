@@ -33,16 +33,18 @@ const Featured: FC<{
           className="relative cursor-pointer text-left transition-all hover:scale-105"
         >
           <div>
-            <div className="absolute inset-0 z-10 line-clamp-4 flex h-full flex-col items-start justify-between p-6 break-all uppercase invert sm:text-4xl">
-              <span className="text-xl">
+            <div className="absolute inset-0 z-10 line-clamp-4 flex h-full flex-col items-start justify-between p-6 uppercase invert sm:p-8 sm:text-4xl">
+              <span className="pr-4 text-xs sm:text-lg">
+                {featured.programs.name}
+              </span>
+              <span className="text-xs sm:text-lg">
                 {featured.recordings.episodeTitle}
               </span>
-              <span className="text-2xl">{featured.programs.name}</span>
             </div>
-            <RecordSquare type="podcast" className="w-32 sm:w-48" />
+            <RecordSquare type="podcast" className="w-36 sm:w-48" />
           </div>
         </button>
-        <span className="max-w-1/2 text-xl text-wrap break-all sm:text-2xl">
+        <span className="max-w-1/2 text-xl text-wrap sm:text-2xl">
           <Link href={`/library/${featured.programs.slug}`}>
             {description || fallbackDescription}{" "}
           </Link>
