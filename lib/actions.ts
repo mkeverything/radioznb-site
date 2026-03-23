@@ -808,7 +808,7 @@ export async function getFeaturedPodcast() {
         and(
           eq(recordings.status, "published"),
           eq(recordings.type, "podcast"),
-          lte(recordings.releaseDate, monthAgo.getTime()),
+          gte(recordings.releaseDate, Math.floor(monthAgo.getTime() / 1000)),
         ),
       )
       .innerJoin(programs, eq(recordings.programId, programs.id))
