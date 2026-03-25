@@ -25,15 +25,9 @@ export default function RecordingComponent({
       className="flex gap-4 text-right text-2xl hover:underline"
     >
       <span className="flex items-end pb-1 text-sm">
-        {getSeasonEpisode(rec.recordings)}
+        {getRecordingSeasonEpisodeString(rec.recordings)}
       </span>
       {rec.recordings.episodeTitle}
     </button>
   )
-}
-
-const getSeasonEpisode = (recording: Recording) => {
-  if (!recording.episodeNumber) return null
-  if (!recording.seasonNumber) return `${recording.episodeNumber}.`
-  return `${recording.seasonNumber}.${recording.episodeNumber}.`
 }

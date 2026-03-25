@@ -35,9 +35,7 @@ sync-code:
 		--exclude '.git' \
 		--exclude 'dist' \
 		--exclude 'build' \
-		--exclude '.env' \
 		--exclude '.env.local' \
-		--exclude '.env.production' \
 		--exclude '.DS_Store' \
 		./ $(REMOTE_USER)@$(REMOTE_HOST):$(REMOTE_PATH)/
 	@echo "✅ code synced"
