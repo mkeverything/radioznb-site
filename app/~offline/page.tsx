@@ -1,10 +1,11 @@
 import Link from "next/link"
+
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Нет сети",
   description:
-    "Нет подключения к интернету. Подключись к сети и обнови страницу.",
+    "Нет подключения к интернету. Подключитесь к сети и обновите страницу.",
 }
 
 export default function OfflinePage() {
@@ -27,8 +28,8 @@ export default function OfflinePage() {
       />
       <h1 className="text-xl font-medium">Нет сети</h1>
       <p className="max-w-sm text-sm leading-relaxed opacity-90">
-        Подключись к интернету (Wi‑Fi или мобильная сеть), затем обнови страницу
-        или вернись на главную, когда связь восстановится.
+        Подключитесь к интернету (Wi‑Fi или мобильная сеть), затем обновите страницу
+        или вернитесь на главную, когда связь восстановится
       </p>
       <Link
         href="/"
