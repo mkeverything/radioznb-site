@@ -52,12 +52,11 @@ const TapePlayer = () => {
           alt="antenna"
         />
         <Image
-          className="absolute inset-0 -z-20 hover:scale-120"
+          className="absolute inset-0 -z-20 hover:scale-105"
           src={`/assets/tape-player/fm-${isPlayingLive ? "on" : "off"}.png`}
           alt="fm"
           width={1366}
           height={768}
-          // style={{ scale: 1.025 }}
         />
         <LiveIndicator />
         <Image
