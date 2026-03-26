@@ -29,9 +29,9 @@ const TapePlayer = () => {
     >
       <WaveAnimation />
       <div className="relative h-full w-full">
-        <div
+        <button
           onClick={onClick}
-          className="absolute z-100 m-auto h-[80%] w-[60%] cursor-pointer max-sm:inset-0 sm:top-20 sm:left-44 sm:h-[20%] sm:w-[15%]"
+          className="peer absolute z-100 m-auto h-[80%] w-[60%] cursor-pointer  max-sm:inset-0 sm:top-20 sm:left-44 sm:h-[20%] sm:w-[15%]"
         />
         <Image
           className="relative inset-0 z-10"
@@ -52,7 +52,7 @@ const TapePlayer = () => {
           alt="antenna"
         />
         <Image
-          className="absolute inset-0 -z-20 hover:scale-105"
+          className="absolute inset-0 -z-20 origin-bottom duration-100 peer-hover:scale-[1.01] peer-focus:scale-[1.01]"
           src={`/assets/tape-player/fm-${isPlayingLive ? "on" : "off"}.png`}
           alt="fm"
           width={1366}
