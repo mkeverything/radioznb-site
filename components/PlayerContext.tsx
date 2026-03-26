@@ -9,7 +9,13 @@ import {
   useRef,
   useState,
 } from "react"
-import { Livestream, useLivestreamStatus } from "./hooks/useLivestreamStatus"
+import { useMediaSessionSync } from "./hooks/useMediaSession"
+import {
+  formatNowPlayingLine,
+  Livestream,
+  NowPlayingTrack,
+  useLivestreamStatus,
+} from "./hooks/useLivestreamStatus"
 
 export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const [src, setSrc] = useState("")
@@ -18,7 +24,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const [timecode, setTimecode] = useState(defaultState.timecode)
   const [duration, setDuration] = useState(defaultState.duration)
   const [volume, setVolume] = useState(defaultState.volume)
-  const livestream = useLivestreamStatus()
+  const { livestream, nowPlaying } = useLivestreamStatus()
   const [isLive, setIsLive] = useState(!!livestream?.is_live)
   const [readyState, setReadyState] = useState(0)
   const ctx = isLive ? "player-context" : "archive-context"
@@ -43,7 +49,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
       ctx,
       JSON.stringify({
         src,
-        title,
+        title: isLive ? stream.title : title,
         isPlaying,
         timecode,
         duration,
@@ -52,6 +58,12 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
       }),
     )
   }, [ctx, duration, isLive, isPlaying, src, timecode, title, volume])
+
+  useEffect(() => {
+    if (!isLive) return
+    const line = formatNowPlayingLine(nowPlaying)
+    setTitle(line ?? stream.title)
+  }, [isLive, nowPlaying])
 
   useEffect(() => {
     if (!audioRef.current) {
@@ -158,6 +170,17 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     setTimecode(time)
   }
 
+  useMediaSessionSync(
+    isLive,
+    isPlaying,
+    nowPlaying,
+    stream.title,
+    () => {
+      void play({ ...stream })
+    },
+    pause,
+  )
+
   return (
     <PlayerContext.Provider
       value={{
@@ -177,6 +200,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
         setVolume,
         readyState,
         livestream,
+        nowPlaying,
       }}
     >
       {children}
@@ -210,6 +234,7 @@ const defaultState: PlayerContextType = {
     is_live: false,
     streamer_name: "",
   },
+  nowPlaying: undefined,
 }
 
 const PlayerContext = createContext<PlayerContextType>(defaultState)
@@ -252,4 +277,5 @@ export type PlayerContextType = {
   setVolume: (vol: number) => void
   readyState: number
   livestream: Livestream
+  nowPlaying: NowPlayingTrack | undefined
 }

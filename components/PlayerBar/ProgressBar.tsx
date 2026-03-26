@@ -1,13 +1,41 @@
 "use client"
 
+import { formatNowPlayingLine } from "../hooks/useLivestreamStatus"
 import { formatTime } from "./Player"
 import { usePlayer } from "../PlayerContext"
 import PlayerBarWavesAnimation from "./Waves"
 
 const ProgressBar = () => {
-  const { title, timecode, duration, seek, isLive, isPlaying } = usePlayer()
+  const { title, timecode, duration, seek, isLive, isPlaying, nowPlaying } =
+    usePlayer()
 
-  if (isLive) return <PlayerBarWavesAnimation playing={isPlaying} />
+  if (isLive) {
+    const showPlaylist =
+      nowPlaying?.playlist?.trim() && formatNowPlayingLine(nowPlaying)
+
+    return (
+      <div className="flex w-full min-w-0 grow items-center gap-3 max-sm:gap-2">
+        {nowPlaying?.art ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={nowPlaying.art}
+            alt=""
+            className="ignore-invert invert size-10 shrink-0 rounded-md object-cover max-sm:size-8"
+          />
+        ) : null}
+        <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
+          <div className="truncate text-lg text-wrap uppercase max-sm:text-base">
+            {title}
+          </div>
+          {showPlaylist ? (
+            <div className="truncate text-xs opacity-40 max-sm:text-[0.65rem]">
+              {nowPlaying?.playlist}
+            </div>
+          ) : null}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex h-fit w-full min-w-0 flex-col justify-center gap-1">
