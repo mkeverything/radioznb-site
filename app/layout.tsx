@@ -6,7 +6,7 @@ import QueryProvider from "@/components/QueryProvider"
 import { SerwistProvider } from "@/components/SerwistProvider"
 import { ThemeProvider } from "@/components/ThemeProvider"
 import type { Metadata, Viewport } from "next"
-import localFont from "next/font/local"
+import { Mynerve } from "next/font/google"
 import "./globals.css"
 
 export default function RootLayout({
@@ -15,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={radioFont.className} suppressHydrationWarning>
-      <body className="mb-34 min-h-dvh overflow-x-clip">
+    <html lang="ru" suppressHydrationWarning>
+      <body className={`${latinFont.variable} mb-34 min-h-dvh overflow-x-clip`}>
         <SerwistProvider swUrl="/serwist/sw.js">
           <QueryProvider>
             <PlayerContextProvider>
@@ -78,8 +78,9 @@ export const metadata: Metadata = {
   },
 }
 
-const radioFont = localFont({
-  src: "../public/fonts/znb.otf",
+const latinFont = Mynerve({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-latin",
+  display: "swap",
 })
-
-// const inter = Inter({ subsets: ["latin"] })

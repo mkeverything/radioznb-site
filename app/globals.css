@@ -2,6 +2,19 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@font-face {
+  font-family: "RadioZNB";
+  src: url("/fonts/znb.otf") format("opentype");
+  font-display: swap;
+  unicode-range:
+    U+0030-0039,
+    U+0400-04FF,
+    U+0500-052F,
+    U+2DE0-2DFF,
+    U+A640-A69F,
+    U+1C80-1C8F;
+}
+
 html {
   transition: background 0.5s ease;
   overflow-x: clip;
@@ -10,6 +23,7 @@ html {
 
 body {
   max-width: 100%;
+  font-family: "RadioZNB", var(--font-latin), serif;
 }
 
 button {
