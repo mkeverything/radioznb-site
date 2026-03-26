@@ -4,6 +4,12 @@
 
 html {
   transition: background 0.5s ease;
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+body {
+  max-width: 100%;
 }
 
 button {
@@ -95,9 +101,11 @@ img {
 }
 
 .masked {
-  width: 100vw;
-  height: 100%;
   position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
   z-index: -10;
   filter: invert();
 

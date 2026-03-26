@@ -3,11 +3,11 @@ import type { MetadataRoute } from "next"
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "радио зимы не будет",
-    short_name: "рзнб",
+    short_name: "радио зимы не будет",
     description: "зе бест рэдио ин зе ворлд.",
     start_url: "/",
     display: "standalone",
-    background_color: "#fafafa",
+    background_color: "#ffffff",
     theme_color: "#fafafa",
     orientation: "any",
     icons: [
@@ -15,7 +15,7 @@ export default function manifest(): MetadataRoute.Manifest {
         src: "/icons/icon-192.png",
         sizes: "192x192",
         type: "image/png",
-        purpose: "maskable",
+        purpose: "any",
       },
       {
         src: "/icons/icon-512.png",

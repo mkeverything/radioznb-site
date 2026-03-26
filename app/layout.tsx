@@ -1,4 +1,5 @@
 import { BackgroundImage } from "@/components/BackgroundImage"
+import { OfflineRedirect } from "@/components/OfflineRedirect"
 import PlayerBar from "@/components/PlayerBar/Player"
 import { PlayerContextProvider } from "@/components/PlayerContext"
 import QueryProvider from "@/components/QueryProvider"
@@ -15,11 +16,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={radioFont.className} suppressHydrationWarning>
-      <body className="mb-34">
+      <body className="mb-34 min-h-dvh overflow-x-clip">
         <SerwistProvider swUrl="/serwist/sw.js">
           <QueryProvider>
             <PlayerContextProvider>
               <ThemeProvider>
+                <OfflineRedirect />
                 <div className="p-4 sm:px-8">{children}</div>
                 <PlayerBar />
                 <BackgroundImage />
@@ -36,6 +38,8 @@ const APP_NAME = "радио зимы не будет"
 const APP_DESCRIPTION = "зе бест рэдио ин зе ворлд."
 
 export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
   themeColor: "#fafafa",
   colorScheme: "light dark",
 }
