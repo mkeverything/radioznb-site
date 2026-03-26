@@ -1,12 +1,13 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import type { NowPlayingTrack } from "./useLivestreamStatus"
+import type { Livestream, NowPlayingTrack } from "./useLivestreamStatus"
 
 export function useMediaSessionSync(
   isLive: boolean,
   isPlaying: boolean,
   nowPlaying: NowPlayingTrack | undefined,
+  livestream: Livestream,
   stationTitle: string,
   playLive: () => void,
   pause: () => void,
@@ -28,20 +29,30 @@ export function useMediaSessionSync(
       return
     }
 
-    const title = nowPlaying?.title?.trim() || stationTitle
-    const artist =
-      nowPlaying?.artist?.trim() ||
-      (nowPlaying?.playlist?.trim() ? undefined : stationTitle) ||
-      stationTitle
-    const album =
-      nowPlaying?.album?.trim() ||
-      nowPlaying?.playlist?.trim() ||
-      undefined
+    const songTitle = nowPlaying?.title?.trim()
+    const songArtist = nowPlaying?.artist?.trim()
+    const playlist = nowPlaying?.playlist?.trim()
+
+    const onAir =
+      livestream?.is_live && livestream.streamer_name?.trim()
+        ? livestream.streamer_name.trim()
+        : ""
+
+    const title =
+      songTitle || playlist || stationTitle
+
+    // Live DJ broadcast: host is primary in `artist`; keep performer when a track is tagged.
+    const artist = onAir
+      ? songArtist
+        ? `${onAir} · ${songArtist}`
+        : onAir
+      : songArtist ?? ""
 
     const artwork: MediaImage[] = []
-    if (nowPlaying?.art) {
+    const artUrl = nowPlaying?.art || livestream?.art
+    if (artUrl) {
       artwork.push({
-        src: nowPlaying.art,
+        src: artUrl,
         sizes: "512x512",
         type: "image/jpeg",
       })
@@ -50,7 +61,7 @@ export function useMediaSessionSync(
     navigator.mediaSession.metadata = new MediaMetadata({
       title,
       artist,
-      ...(album ? { album } : {}),
+      album: stationTitle,
       ...(artwork.length ? { artwork } : {}),
     })
 
@@ -67,5 +78,5 @@ export function useMediaSessionSync(
       navigator.mediaSession.setActionHandler("play", null)
       navigator.mediaSession.setActionHandler("pause", null)
     }
-  }, [isLive, isPlaying, nowPlaying, stationTitle])
+  }, [isLive, isPlaying, nowPlaying, livestream, stationTitle])
 }

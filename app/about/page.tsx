@@ -1,10 +1,11 @@
 import HomeButton from "@/components/HomeButton"
+import { stationRestUrl } from "@/lib/radioStation"
 import Image from "next/image"
 import Link from "next/link"
 
 const Page = async () => {
   const request = await fetch(
-    "https://server.radioznb.ru/api/station/radioznb-live",
+    stationRestUrl,
     {
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_RADIOZNB_API_KEY}`,

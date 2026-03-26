@@ -10,8 +10,8 @@ import {
   useState,
 } from "react"
 import { useMediaSessionSync } from "./hooks/useMediaSession"
+import { listenUrl } from "@/lib/radioStation"
 import {
-  formatNowPlayingLine,
   Livestream,
   NowPlayingTrack,
   useLivestreamStatus,
@@ -61,9 +61,8 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     if (!isLive) return
-    const line = formatNowPlayingLine(nowPlaying)
-    setTitle(line ?? stream.title)
-  }, [isLive, nowPlaying])
+    setTitle(stream.title)
+  }, [isLive])
 
   useEffect(() => {
     if (!audioRef.current) {
@@ -174,6 +173,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     isLive,
     isPlaying,
     nowPlaying,
+    livestream,
     stream.title,
     () => {
       void play({ ...stream })
@@ -209,7 +209,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 }
 
 export const stream: Stream = {
-  src: "https://server.radioznb.ru/listen/radioznb-live/radio.mp3",
+  src: listenUrl,
   title: "радио зимы не будет",
   isLive: true,
 }

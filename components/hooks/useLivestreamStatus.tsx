@@ -1,11 +1,11 @@
+import {
+  nowplayingApiUrl,
+  nowplayingStaticUrl,
+  nowplayingWebSocketUrl,
+  wsStationChannel,
+} from "@/lib/radioStation"
 import { useEffect, useState } from "react"
 import useWebSocket, { ReadyState } from "react-use-websocket"
-
-const STATIC_NP =
-  "https://server.radioznb.ru/api/nowplaying_static/radioznb-live.json"
-const NOWPLAYING_POLL =
-  "https://server.radioznb.ru/api/nowplaying/radioznb-live"
-const WS_URL = "wss://server.radioznb.ru/api/live/nowplaying/websocket"
 
 const POLL_MS = 20_000
 
@@ -15,6 +15,8 @@ export type NowPlayingTrack = {
   album: string | null
   art: string | null
   playlist: string | null
+  /** Present on some AzuraCast builds; `live.streamer_name` is the usual source for DJ name. */
+  streamer: string | null
 }
 
 export type Livestream =
@@ -42,6 +44,7 @@ function mapNowPlayingFromApi(raw: any): NowPlayingTrack | undefined {
     album: song?.album ?? null,
     art: song?.art ?? null,
     playlist: raw.playlist ?? null,
+    streamer: typeof raw.streamer === "string" ? raw.streamer : null,
   }
 }
 
@@ -63,12 +66,12 @@ export const useLivestreamStatus = (): StationFeed => {
     undefined,
   )
 
-  const ws = useWebSocket(WS_URL)
+  const ws = useWebSocket(nowplayingWebSocketUrl)
 
   useEffect(() => {
     if (ws.readyState === ReadyState.OPEN) {
       ws.sendJsonMessage({
-        subs: { "station:radioznb-live": { recover: true } },
+        subs: { [wsStationChannel]: { recover: true } },
       })
     }
   }, [ws, ws.readyState])
@@ -76,7 +79,7 @@ export const useLivestreamStatus = (): StationFeed => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(STATIC_NP)
+        const response = await fetch(nowplayingStaticUrl)
         if (!response.ok) throw new Error("Network response was not ok")
         const data = await response.json()
         if (data.live && "is_live" in data.live) {
@@ -93,7 +96,7 @@ export const useLivestreamStatus = (): StationFeed => {
   useEffect(() => {
     const id = setInterval(async () => {
       try {
-        const response = await fetch(NOWPLAYING_POLL)
+        const response = await fetch(nowplayingApiUrl)
         if (!response.ok) return
         const data = await response.json()
         setNowPlaying(mapNowPlayingFromApi(data.now_playing))

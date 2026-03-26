@@ -1,45 +1,84 @@
 "use client"
 
-import { formatNowPlayingLine } from "../hooks/useLivestreamStatus"
-import { formatTime } from "./Player"
 import { usePlayer } from "../PlayerContext"
-import PlayerBarWavesAnimation from "./Waves"
+import { formatTime } from "./Player"
 
 const ProgressBar = () => {
-  const { title, timecode, duration, seek, isLive, isPlaying, nowPlaying } =
+  const { title, timecode, duration, seek, isLive, nowPlaying, livestream } =
     usePlayer()
 
   if (isLive) {
-    const showPlaylist =
-      nowPlaying?.playlist?.trim() && formatNowPlayingLine(nowPlaying)
+    const songArtist = nowPlaying?.artist?.trim()
+    const songTitle = nowPlaying?.title?.trim()
+    const playlist = nowPlaying?.playlist?.trim()
+    const hasSong = !!(songArtist || songTitle)
+    const showPlaylistExtra = !!playlist && hasSong
+
+    const hostOnAir =
+      livestream?.is_live &&
+      (livestream.streamer_name?.trim() || nowPlaying?.streamer?.trim())
+
+    const coverArt =
+      nowPlaying?.art ||
+      (livestream?.is_live && livestream.art ? livestream.art : null)
 
     return (
-      <div className="flex w-full min-w-0 grow items-center gap-3 max-sm:gap-2">
-        {nowPlaying?.art ? (
+      <div
+        className={`flex w-full min-w-0 flex-1 flex-row items-center gap-2 max-sm:gap-1.5`}
+      >
+        {coverArt ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={nowPlaying.art}
+            src={coverArt}
             alt=""
-            className="ignore-invert invert size-10 shrink-0 rounded-md object-cover max-sm:size-8"
+            className="ignore-invert size-8 shrink-0 self-center rounded-md object-cover invert max-sm:size-7"
           />
         ) : null}
-        <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
-          <div className="truncate text-lg text-wrap uppercase max-sm:text-base">
-            {title}
-          </div>
-          {showPlaylist ? (
-            <div className="truncate text-xs opacity-40 max-sm:text-[0.65rem]">
-              {nowPlaying?.playlist}
-            </div>
-          ) : null}
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-center">
+          {hostOnAir ? (
+            <>
+              <div className="line-clamp-2 text-xs uppercase opacity-50 max-sm:text-[0.65rem]">
+                {title}
+              </div>
+              <div className="text-sm font-medium text-pretty break-words opacity-90 max-sm:text-xs">
+                {livestream?.streamer_name?.trim() ||
+                  nowPlaying?.streamer?.trim()}
+              </div>
+            </>
+          ) : (
+            <>
+              {songArtist ? (
+                <div className="text-sm text-pretty break-words opacity-80 max-sm:text-xs">
+                  {songArtist}
+                </div>
+              ) : null}
+              {songTitle ? (
+                <div className="text-lg text-pretty break-words uppercase max-sm:text-base">
+                  {songTitle}
+                </div>
+              ) : null}
+              {!hasSong && playlist ? (
+                <div className="text-lg text-pretty break-words uppercase max-sm:text-base">
+                  {playlist}
+                </div>
+              ) : null}
+              {showPlaylistExtra ? (
+                <div className="text-xs text-pretty break-words opacity-40 max-sm:text-[0.65rem]">
+                  {playlist}
+                </div>
+              ) : null}
+            </>
+          )}
         </div>
       </div>
     )
   }
 
   return (
-    <div className="flex h-fit w-full min-w-0 flex-col justify-center gap-1">
-      <div className="truncate text-lg uppercase">{title}</div>
+    <div
+      className={`flex h-fit w-full min-w-0 flex-1 flex-col justify-center gap-2`}
+    >
+      <div className="text-lg text-pretty break-words uppercase">{title}</div>
 
       <input
         type="range"
@@ -48,10 +87,10 @@ const ProgressBar = () => {
         step={0.1}
         value={timecode}
         onChange={(e) => seek(Number(e.target.value))}
-        className={`h-0.5 w-full appearance-none ${inputExtraStyles}`}
+        className={`h-0.5 w-full shrink-0 appearance-none ${inputExtraStyles}`}
       />
 
-      <div className="flex w-full justify-between text-xs opacity-30">
+      <div className="flex w-full shrink-0 justify-between text-xs opacity-30">
         <div>{formatTime(timecode)}</div>
         <div>{formatTime(duration)}</div>
       </div>

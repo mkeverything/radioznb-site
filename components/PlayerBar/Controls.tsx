@@ -18,7 +18,7 @@ const Controls = () => {
       </button>
       {!isLive && livestream?.is_live && (
         <button
-          className={`absolute -bottom-4 -left-4 size-16 p-2 sm:static`}
+          className={`absolute -bottom-2 -left-2 size-12 p-2 sm:static`}
           onClick={() => play(stream)}
           title={`в эфире ${livestream.streamer_name}!`}
         >

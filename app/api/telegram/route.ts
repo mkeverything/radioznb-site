@@ -1,11 +1,11 @@
+import { nowplayingApiUrl } from "@/lib/radioStation"
 import { NextRequest, NextResponse } from "next/server"
 
 const BOT_TOKEN = process.env.BOT_TOKEN!
 const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`
-const NOWPLAYING_API = "https://server.radioznb.ru/api/nowplaying/radioznb-live"
 
 async function getNowPlaying() {
-  const res = await fetch(NOWPLAYING_API, { next: { revalidate: 0 } })
+  const res = await fetch(nowplayingApiUrl, { next: { revalidate: 0 } })
   if (!res.ok) throw new Error(`api responded with ${res.status}`)
   const data = await res.json()
   return {
