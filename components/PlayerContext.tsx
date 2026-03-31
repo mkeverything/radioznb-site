@@ -17,6 +17,31 @@ import {
   useLivestreamStatus,
 } from "./hooks/useLivestreamStatus"
 
+const LIVE_RECONNECT_DEBOUNCE_MS = 900
+const LIVE_FREEZE_THRESHOLD_MS = 12_000
+const LIVE_RECONNECT_ATTEMPT_CAP = 15
+
+const LOG_PREFIX = "[radioznb live]"
+
+function describeMediaError(audio: HTMLAudioElement): string {
+  const err = audio.error
+  if (!err) return "unknown (no MediaError)"
+  const names: Record<number, string> = {
+    1: "MEDIA_ERR_ABORTED",
+    2: "MEDIA_ERR_NETWORK",
+    3: "MEDIA_ERR_DECODE",
+    4: "MEDIA_ERR_SRC_NOT_SUPPORTED",
+  }
+  const name = names[err.code] ?? `MEDIA_ERR_${err.code}`
+  const msg = err.message?.trim()
+  return msg ? `${name}: ${msg}` : name
+}
+
+function liveUrlWithCacheBust(): string {
+  const sep = listenUrl.includes("?") ? "&" : "?"
+  return `${listenUrl}${sep}_=${Date.now()}`
+}
+
 export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const [src, setSrc] = useState("")
   const [title, setTitle] = useState("")
@@ -30,6 +55,21 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const ctx = isLive ? "player-context" : "archive-context"
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const wantsLivePlayRef = useRef(false)
+  const isLiveRef = useRef(false)
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  )
+  const reconnectAttemptsRef = useRef(0)
+  const lastLiveCurrentTimeRef = useRef(0)
+  const liveFrozenSinceRef = useRef<number | null>(null)
+  const scheduleLiveReconnectRef = useRef<(reason: string) => void>(
+    (_reason) => {},
+  )
+
+  useEffect(() => {
+    isLiveRef.current = isLive
+  }, [isLive])
 
   useEffect(() => {
     const saved = getLocalStorageContext(ctx)
@@ -64,6 +104,13 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     setTitle(stream.title)
   }, [isLive])
 
+  const clearReconnectTimeout = () => {
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current)
+      reconnectTimeoutRef.current = null
+    }
+  }
+
   useEffect(() => {
     if (!audioRef.current) {
       audioRef.current = new Audio()
@@ -71,14 +118,81 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
     const audio = audioRef.current
 
-    let last = 0
-    const interval = 1000
+    let lastThrottle = 0
+    const throttleMs = 1000
+
+    const runReconnect = () => {
+      if (!wantsLivePlayRef.current || !isLiveRef.current) return
+      if (reconnectAttemptsRef.current >= LIVE_RECONNECT_ATTEMPT_CAP) {
+        console.error(
+          LOG_PREFIX,
+          "giving up after",
+          LIVE_RECONNECT_ATTEMPT_CAP,
+          "reconnect attempts",
+        )
+        wantsLivePlayRef.current = false
+        setIsPlaying(false)
+        return
+      }
+      reconnectAttemptsRef.current += 1
+      console.warn(
+        LOG_PREFIX,
+        "reconnect attempt",
+        `${reconnectAttemptsRef.current}/${LIVE_RECONNECT_ATTEMPT_CAP}`,
+        "→",
+        "new src",
+      )
+      audio.src = liveUrlWithCacheBust()
+      audio.load()
+      void audio.play().catch((e) => {
+        console.warn(LOG_PREFIX, "play() failed after reconnect:", e)
+        scheduleLiveReconnectRef.current("play() failed after reconnect")
+      })
+    }
+
+    const scheduleLiveReconnect = (reason: string) => {
+      if (!wantsLivePlayRef.current || !isLiveRef.current) return
+      console.warn(
+        LOG_PREFIX,
+        "reconnect scheduled:",
+        reason,
+        `(in ${LIVE_RECONNECT_DEBOUNCE_MS}ms)`,
+      )
+      clearReconnectTimeout()
+      reconnectTimeoutRef.current = setTimeout(() => {
+        reconnectTimeoutRef.current = null
+        runReconnect()
+      }, LIVE_RECONNECT_DEBOUNCE_MS)
+    }
+
+    scheduleLiveReconnectRef.current = scheduleLiveReconnect
 
     const onTimeUpdate = () => {
       const now = performance.now()
-      if (now - last >= interval) {
-        last = now
+      if (now - lastThrottle >= throttleMs) {
+        lastThrottle = now
         setTimecode(audio.currentTime)
+      }
+
+      if (
+        isLiveRef.current &&
+        wantsLivePlayRef.current &&
+        !audio.paused
+      ) {
+        const t = audio.currentTime
+        if (t === lastLiveCurrentTimeRef.current) {
+          if (liveFrozenSinceRef.current === null)
+            liveFrozenSinceRef.current = now
+          else if (now - liveFrozenSinceRef.current >= LIVE_FREEZE_THRESHOLD_MS) {
+            liveFrozenSinceRef.current = null
+            scheduleLiveReconnect(
+              `currentTime frozen ~${LIVE_FREEZE_THRESHOLD_MS}ms (decode/network stall)`,
+            )
+          }
+        } else {
+          lastLiveCurrentTimeRef.current = t
+          liveFrozenSinceRef.current = null
+        }
       }
     }
 
@@ -90,13 +204,53 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
       setSrc(audio.src)
       setDuration(isFinite(audio.duration) ? audio.duration : 0)
       setReadyState(audio.readyState)
+      if (isLiveRef.current) {
+        reconnectAttemptsRef.current = 0
+        liveFrozenSinceRef.current = null
+        lastLiveCurrentTimeRef.current = audio.currentTime
+      }
     }
+
     const onEnded = () => {
+      if (isLiveRef.current && wantsLivePlayRef.current) {
+        console.warn(LOG_PREFIX, "ended during live (stream ended or server closed connection)")
+        scheduleLiveReconnect("ended")
+        return
+      }
       setIsPlaying(false)
       setTimecode(0)
     }
+
     const onPause = () => setIsPlaying(false)
-    const onPlay = () => setIsPlaying(true)
+
+    const onPlay = () => {
+      setIsPlaying(true)
+      if (isLiveRef.current) {
+        reconnectAttemptsRef.current = 0
+        liveFrozenSinceRef.current = null
+        lastLiveCurrentTimeRef.current = audio.currentTime
+      }
+    }
+
+    const onError = () => {
+      const detail = describeMediaError(audio)
+      console.warn(LOG_PREFIX, "audio error:", detail, {
+        networkState: audio.networkState,
+        readyState: audio.readyState,
+        currentSrc: audio.currentSrc || audio.src,
+      })
+      if (isLiveRef.current && wantsLivePlayRef.current)
+        scheduleLiveReconnect(`error: ${detail}`)
+    }
+
+    const onStalled = () => {
+      if (!isLiveRef.current || !wantsLivePlayRef.current) return
+      console.warn(LOG_PREFIX, "stalled", {
+        networkState: audio.networkState,
+        readyState: audio.readyState,
+      })
+      scheduleLiveReconnect("stalled")
+    }
 
     audio.addEventListener("timeupdate", onTimeUpdate)
     audio.addEventListener("loadstart", onLoadStart)
@@ -104,14 +258,33 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     audio.addEventListener("play", onPlay)
     audio.addEventListener("pause", onPause)
     audio.addEventListener("ended", onEnded)
+    audio.addEventListener("error", onError)
+    audio.addEventListener("stalled", onStalled)
+
+    const onVisible = () => {
+      if (document.visibilityState !== "visible") return
+      if (!wantsLivePlayRef.current || !isLiveRef.current) return
+      if (audio.paused) {
+        void audio.play().catch((e) => {
+          console.warn(LOG_PREFIX, "tab visible: resume play() failed:", e)
+          scheduleLiveReconnect("visibility resume play() failed")
+        })
+      }
+    }
+
+    document.addEventListener("visibilitychange", onVisible)
 
     return () => {
+      clearReconnectTimeout()
+      document.removeEventListener("visibilitychange", onVisible)
       audio.removeEventListener("timeupdate", onTimeUpdate)
       audio.removeEventListener("loadstart", onLoadStart)
       audio.removeEventListener("loadeddata", onLoaded)
       audio.removeEventListener("play", onPlay)
       audio.removeEventListener("pause", onPause)
       audio.removeEventListener("ended", onEnded)
+      audio.removeEventListener("error", onError)
+      audio.removeEventListener("stalled", onStalled)
     }
   }, [])
 
@@ -124,13 +297,23 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const play = async ({
     src: newSrc,
     title,
-    isLive = false,
+    isLive: live,
     timecode: storedTimecode,
   }: Stream) => {
     const audio = audioRef.current
     if (!audio) return
+
+    if (live) {
+      wantsLivePlayRef.current = true
+      isLiveRef.current = true
+    } else {
+      wantsLivePlayRef.current = false
+      isLiveRef.current = false
+      clearReconnectTimeout()
+    }
+
     audio.pause()
-    if (isLive) {
+    if (live) {
       audio.src = newSrc
     } else {
       if (audio.src !== newSrc) {
@@ -140,13 +323,23 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
         audio.currentTime = storedTimecode
       } else if (src === newSrc) audio.currentTime = timecode
     }
-    setIsLive(isLive)
+    setIsLive(live)
     setTitle(title)
 
-    await audio.play()
+    try {
+      await audio.play()
+    } catch (e) {
+      if (live) {
+        console.warn(LOG_PREFIX, "play() rejected:", e)
+        if (wantsLivePlayRef.current)
+          scheduleLiveReconnectRef.current("play() rejected (e.g. autoplay policy)")
+      }
+    }
   }
 
   const pause = () => {
+    wantsLivePlayRef.current = false
+    clearReconnectTimeout()
     const audio = audioRef.current
     if (!audio) return
     audio.pause()

@@ -14,6 +14,10 @@ const TapePlayer = () => {
   const { src } = useArchiveStream()
 
   const onClick = () => {
+    if (isPlayingLive && readyState < 3) {
+      void play(stream)
+      return
+    }
     if (isPlaying && readyState < 3) return
     if (isPlayingLive) {
       pause()
