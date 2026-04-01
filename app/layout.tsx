@@ -34,7 +34,7 @@ export default function RootLayout({
   )
 }
 
-const APP_NAME = "зимы не будет"
+const APP_NAME = "радио зимы не будет"
 const APP_DESCRIPTION = "зе бест рэдио ин зе ворлд."
 
 export const viewport: Viewport = {

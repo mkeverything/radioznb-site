@@ -17,20 +17,21 @@ function LiveNowPlaying() {
     (livestream.streamer_name?.trim() || nowPlaying?.streamer?.trim())
 
   if (hostOnAir) {
+    const host =
+      livestream?.streamer_name?.trim() || nowPlaying?.streamer?.trim()
     return (
       <>
-        <div className="line-clamp-2 text-xs uppercase opacity-50 max-sm:text-[0.65rem]">
+        <div className="line-clamp-2 text-xs uppercase opacity-45 max-sm:text-[0.65rem]">
           {title}
         </div>
-        <div className="text-sm font-medium text-pretty break-words opacity-90 max-sm:text-xs">
-          {livestream?.streamer_name?.trim() || nowPlaying?.streamer?.trim()}
-        </div>
+        {host ? (
+          <div className="text-base font-semibold tracking-wide text-pretty break-words uppercase opacity-100 max-sm:text-sm">
+            {host}
+          </div>
+        ) : null}
       </>
     )
   }
-
-  const songSecondary =
-    [songArtist, songTitle].filter(Boolean).join(" — ") || null
 
   return (
     <>
@@ -40,26 +41,20 @@ function LiveNowPlaying() {
         </div>
       ) : null}
       {hasSong ? (
-        hasPlaylist ? (
-          songSecondary ? (
-            <div className="text-xs text-pretty break-words opacity-40 max-sm:text-[0.65rem]">
-              {songSecondary}
-            </div>
-          ) : null
-        ) : (
-          <>
-            {songArtist ? (
-              <div className="text-sm text-pretty break-words opacity-80 max-sm:text-xs">
-                {songArtist}
-              </div>
-            ) : null}
-            {songTitle ? (
-              <div className="text-lg text-pretty break-words uppercase max-sm:text-base">
-                {songTitle}
-              </div>
-            ) : null}
-          </>
-        )
+        <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 text-pretty">
+          {songArtist ? (
+            <span className="text-base font-semibold tracking-wide opacity-100 max-sm:text-sm">
+              {songArtist}
+            </span>
+          ) : null}
+          {songTitle ? (
+            <span
+              className={`text-base max-sm:text-sm ${songArtist ? "opacity-50" : ""}`}
+            >
+              {songTitle}
+            </span>
+          ) : null}
+        </div>
       ) : null}
     </>
   )
