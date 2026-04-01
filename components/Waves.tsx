@@ -4,6 +4,13 @@ import Image from "next/image"
 import { FC, PropsWithChildren, useEffect, useState } from "react"
 import { usePlayer } from "./PlayerContext"
 
+/** Display width for Next/Image `sizes` — waves live in ~w-1/7 of tape (max 42rem), cells w-1/4 | w-1/6 | w-1/8 of that. */
+const waveSizes = {
+  quarter: "(max-width: 640px) 3.6vw, 1.5rem",
+  sixth: "(max-width: 640px) 2.4vw, 1rem",
+  eighth: "(max-width: 640px) 1.8vw, 0.75rem",
+} as const
+
 const WaveAnimation: FC<PropsWithChildren> = ({ children }) => {
   const [src, setSrc] = useState<Wave>(waves[0])
   const { isPlaying, isLive } = usePlayer()
@@ -36,19 +43,19 @@ const WavesLeft: FC<{ src: string[] }> = ({ src }) => (
       className={`animate-waves relative h-full w-1/4 opacity-0`}
       style={{ animationDelay: "500ms" }}
     >
-      <Image src={src[0]} alt="wave-l-1" fill sizes="100vw" />
+      <Image src={src[0]} alt="wave-l-1" fill sizes={waveSizes.quarter} />
     </div>
     <div
       className={`animate-waves relative top-1/5 h-2/3 w-1/6 opacity-0`}
       style={{ animationDelay: "400ms" }}
     >
-      <Image src={src[1]} alt="wave-l-2" fill sizes="100vw" />
+      <Image src={src[1]} alt="wave-l-2" fill sizes={waveSizes.sixth} />
     </div>
     <div
       className={`animate-waves relative top-2/5 h-2/5 w-1/8 opacity-0`}
       style={{ animationDelay: "300ms" }}
     >
-      <Image src={src[2]} alt="wave-l-3" fill sizes="100vh" />
+      <Image src={src[2]} alt="wave-l-3" fill sizes={waveSizes.eighth} />
     </div>
   </div>
 )
@@ -59,19 +66,19 @@ const WavesRight: FC<{ src: string[] }> = ({ src }) => (
       className={`animate-waves relative top-2/5 h-2/5 w-1/8 opacity-0`}
       style={{ animationDelay: "300ms" }}
     >
-      <Image src={src[0]} alt="wave-r-1" fill />
+      <Image src={src[0]} alt="wave-r-1" fill sizes={waveSizes.eighth} />
     </div>
     <div
       className={`animate-waves relative top-1/5 h-2/3 w-1/6 opacity-0`}
       style={{ animationDelay: "400ms" }}
     >
-      <Image src={src[1]} alt="wave-r-2" fill />
+      <Image src={src[1]} alt="wave-r-2" fill sizes={waveSizes.sixth} />
     </div>
     <div
       className={`animate-waves relative h-full w-1/4 opacity-0`}
       style={{ animationDelay: "500ms" }}
     >
-      <Image src={src[2]} alt="wave-r-3" fill />
+      <Image src={src[2]} alt="wave-r-3" fill sizes={waveSizes.quarter} />
     </div>
   </div>
 )
