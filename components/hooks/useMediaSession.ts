@@ -3,6 +3,35 @@
 import { useEffect, useRef } from "react"
 import type { Livestream, NowPlayingTrack } from "./useLivestreamStatus"
 
+/**
+ * Map live metadata to MediaMetadata for lock screen / Bluetooth / car displays.
+ * `title`: radio name · playlist · `artist`: artist — track (third field unused).
+ */
+function liveMediaFields(
+  stationTitle: string,
+  nowPlaying: NowPlayingTrack | undefined,
+  livestream: Livestream,
+): { title: string; artist: string; album: string } {
+  const radio = stationTitle.trim()
+  const playlist = nowPlaying?.playlist?.trim() ?? ""
+  const songArtist = nowPlaying?.artist?.trim() ?? ""
+  const songTitle = nowPlaying?.title?.trim() ?? ""
+  const streamer =
+    livestream?.is_live &&
+    (livestream.streamer_name?.trim() || nowPlaying?.streamer?.trim())
+      ? livestream.streamer_name?.trim() ||
+        nowPlaying?.streamer?.trim() ||
+        ""
+      : ""
+
+  const title = [radio, playlist].filter(Boolean).join(" · ")
+  const trackLine = [songArtist, songTitle].filter(Boolean).join(" — ")
+  const artist = trackLine || streamer || ""
+  const album = ""
+
+  return { title, artist, album }
+}
+
 export function useMediaSessionSync(
   isLive: boolean,
   isPlaying: boolean,
@@ -29,24 +58,11 @@ export function useMediaSessionSync(
       return
     }
 
-    const songTitle = nowPlaying?.title?.trim()
-    const songArtist = nowPlaying?.artist?.trim()
-    const playlist = nowPlaying?.playlist?.trim()
-
-    const onAir =
-      livestream?.is_live && livestream.streamer_name?.trim()
-        ? livestream.streamer_name.trim()
-        : ""
-
-    const title =
-      songTitle || playlist || stationTitle
-
-    // Live DJ broadcast: host is primary in `artist`; keep performer when a track is tagged.
-    const artist = onAir
-      ? songArtist
-        ? `${onAir} · ${songArtist}`
-        : onAir
-      : songArtist ?? ""
+    const { title, artist, album } = liveMediaFields(
+      stationTitle,
+      nowPlaying,
+      livestream,
+    )
 
     const artwork: MediaImage[] = []
     const artUrl = nowPlaying?.art || livestream?.art
@@ -61,7 +77,7 @@ export function useMediaSessionSync(
     navigator.mediaSession.metadata = new MediaMetadata({
       title,
       artist,
-      album: stationTitle,
+      album,
       ...(artwork.length ? { artwork } : {}),
     })
 

@@ -3,81 +3,73 @@
 import { usePlayer } from "../PlayerContext"
 import { formatTime } from "./Player"
 
-const ProgressBar = () => {
-  const { title, timecode, duration, seek, isLive, nowPlaying, livestream } =
-    usePlayer()
+function LiveNowPlaying() {
+  const { title, nowPlaying, livestream } = usePlayer()
 
-  if (isLive) {
-    const songArtist = nowPlaying?.artist?.trim()
-    const songTitle = nowPlaying?.title?.trim()
-    const playlist = nowPlaying?.playlist?.trim()
-    const hasSong = !!(songArtist || songTitle)
-    const showPlaylistExtra = !!playlist && hasSong
+  const songArtist = nowPlaying?.artist?.trim()
+  const songTitle = nowPlaying?.title?.trim()
+  const playlist = nowPlaying?.playlist?.trim()
+  const hasSong = !!(songArtist || songTitle)
+  const hasPlaylist = !!playlist
 
-    const hostOnAir =
-      livestream?.is_live &&
-      (livestream.streamer_name?.trim() || nowPlaying?.streamer?.trim())
+  const hostOnAir =
+    livestream?.is_live &&
+    (livestream.streamer_name?.trim() || nowPlaying?.streamer?.trim())
 
-    const coverArt =
-      nowPlaying?.art ||
-      (livestream?.is_live && livestream.art ? livestream.art : null)
-
+  if (hostOnAir) {
     return (
-      <div
-        className={`flex w-full min-w-0 flex-1 flex-row items-center gap-2 max-sm:gap-1.5`}
-      >
-        {coverArt ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={coverArt}
-            alt=""
-            className="ignore-invert size-8 shrink-0 self-center rounded-md object-cover invert max-sm:size-7"
-          />
-        ) : null}
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-center">
-          {hostOnAir ? (
-            <>
-              <div className="line-clamp-2 text-xs uppercase opacity-50 max-sm:text-[0.65rem]">
-                {title}
-              </div>
-              <div className="text-sm font-medium text-pretty break-words opacity-90 max-sm:text-xs">
-                {livestream?.streamer_name?.trim() ||
-                  nowPlaying?.streamer?.trim()}
-              </div>
-            </>
-          ) : (
-            <>
-              {songArtist ? (
-                <div className="text-sm text-pretty break-words opacity-80 max-sm:text-xs">
-                  {songArtist}
-                </div>
-              ) : null}
-              {songTitle ? (
-                <div className="text-lg text-pretty break-words uppercase max-sm:text-base">
-                  {songTitle}
-                </div>
-              ) : null}
-              {!hasSong && playlist ? (
-                <div className="text-lg text-pretty break-words uppercase max-sm:text-base">
-                  {playlist}
-                </div>
-              ) : null}
-              {showPlaylistExtra ? (
-                <div className="text-xs text-pretty break-words opacity-40 max-sm:text-[0.65rem]">
-                  {playlist}
-                </div>
-              ) : null}
-            </>
-          )}
+      <>
+        <div className="line-clamp-2 text-xs uppercase opacity-50 max-sm:text-[0.65rem]">
+          {title}
         </div>
-      </div>
+        <div className="text-sm font-medium text-pretty break-words opacity-90 max-sm:text-xs">
+          {livestream?.streamer_name?.trim() || nowPlaying?.streamer?.trim()}
+        </div>
+      </>
     )
   }
 
+  const songSecondary =
+    [songArtist, songTitle].filter(Boolean).join(" — ") || null
+
   return (
-    <div
-      className={`flex h-fit w-full min-w-0 flex-1 flex-col justify-center gap-2`}
-    >
+    <>
+      {hasPlaylist ? (
+        <div className="text-lg text-pretty break-words uppercase max-sm:text-base">
+          {playlist}
+        </div>
+      ) : null}
+      {hasSong ? (
+        hasPlaylist ? (
+          songSecondary ? (
+            <div className="text-xs text-pretty break-words opacity-40 max-sm:text-[0.65rem]">
+              {songSecondary}
+            </div>
+          ) : null
+        ) : (
+          <>
+            {songArtist ? (
+              <div className="text-sm text-pretty break-words opacity-80 max-sm:text-xs">
+                {songArtist}
+              </div>
+            ) : null}
+            {songTitle ? (
+              <div className="text-lg text-pretty break-words uppercase max-sm:text-base">
+                {songTitle}
+              </div>
+            ) : null}
+          </>
+        )
+      ) : null}
+    </>
+  )
+}
+
+function ArchiveSeekBar() {
+  const { title, timecode, duration, seek } = usePlayer()
+
+  return (
+    <>
       <div className="text-lg text-pretty break-words uppercase">{title}</div>
 
       <input
@@ -94,6 +86,24 @@ const ProgressBar = () => {
         <div>{formatTime(timecode)}</div>
         <div>{formatTime(duration)}</div>
       </div>
+    </>
+  )
+}
+
+const ProgressBar = () => {
+  const { isLive } = usePlayer()
+
+  if (isLive) {
+    return (
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-center">
+        <LiveNowPlaying />
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex h-fit w-full min-w-0 flex-1 flex-col justify-center gap-2">
+      <ArchiveSeekBar />
     </div>
   )
 }

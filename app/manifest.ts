@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next"
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "радио зимы не будет",
-    short_name: "радио зимы не будет",
+    short_name: "зимы не будет",
     description: "зе бест рэдио ин зе ворлд.",
     start_url: "/",
     display: "standalone",

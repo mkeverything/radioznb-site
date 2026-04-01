@@ -403,7 +403,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
 export const stream: Stream = {
   src: listenUrl,
-  title: "радио зимы не будет",
+  title: "зимы не будет",
   isLive: true,
 }
 
