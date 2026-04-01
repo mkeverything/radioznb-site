@@ -30,8 +30,8 @@ button:active {
 @theme {
   /* One stack for Latin + Cyrillic via system UI fonts (no webfont). */
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   --animate-waves: waves 2s steps(1, end) infinite;
   --animate-bg: bg-frames 0.75s infinite;
   --animate-blink: blink 1.2s steps(1, end) infinite;
@@ -106,7 +106,7 @@ img {
 
 .masked {
   position: fixed;
-  inset: 0;
+  /* inset: 0; */
   width: 100%;
   height: 100%;
   max-width: 100%;
@@ -133,7 +133,7 @@ img {
 
 @media (max-width: 640px) {
   .masked-transformed {
-    transform: scaleY(0.5);
+    transform: scaleY(0.7);
     transform-origin: 0 100%;
   }
 }
