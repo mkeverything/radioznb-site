@@ -52,21 +52,6 @@ export const metadata: Metadata = {
   other: {
     "apple-mobile-web-app-capable": "yes",
   },
-  icons: {
-    icon: [
-      {
-        url: "/pwa/manifest-icon-192.maskable.png",
-        sizes: "192x192",
-        type: "image/png",
-      },
-      {
-        url: "/pwa/manifest-icon-512.maskable.png",
-        sizes: "512x512",
-        type: "image/png",
-      },
-    ],
-    apple: "/pwa/apple-icon-180.png",
-  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
