@@ -1,6 +1,10 @@
 import Image from "next/image"
 import { FC, HTMLAttributes, PropsWithChildren, useMemo } from "react"
 
+/** Inner slot for `RecordSquare` — keep all recording-card layout anchored here. */
+const recordSquareInner =
+  "flex size-full min-h-0 min-w-0 flex-col overflow-hidden drop-shadow-[0_0_1px_white]"
+
 export const RecordSquare: FC<
   {
     className?: string
@@ -18,7 +22,7 @@ export const RecordSquare: FC<
   )
   return (
     <div
-      className={`relative flex aspect-square min-w-0 overflow-hidden p-6 text-xs text-wrap whitespace-break-spaces text-black sm:p-8 sm:text-sm lg:p-8 md:text-base ${className}`}
+      className={`relative flex aspect-square min-w-0 overflow-hidden p-6 text-xs text-wrap whitespace-break-spaces text-black sm:p-8 sm:text-sm md:text-base lg:p-8 ${className}`}
       {...props}
     >
       <Image
@@ -37,7 +41,7 @@ export const RecordSquare: FC<
           alt="podcast"
         />
       )}
-      <div className="flex size-full min-w-0 overflow-hidden drop-shadow-[0_0_1px_white]">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden drop-shadow-[0_0_1px_white]">
         {children}
       </div>
     </div>
