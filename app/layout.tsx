@@ -7,6 +7,7 @@ import { SerwistProvider } from "@/components/SerwistProvider"
 import { ThemeProvider } from "@/components/ThemeProvider"
 import type { Metadata, Viewport } from "next"
 import { Mynerve } from "next/font/google"
+import { appleSplashStartupImages } from "../lib/apple-splash-startup-images"
 import "./globals.css"
 
 export default function RootLayout({
@@ -48,10 +49,30 @@ export const metadata: Metadata = {
   applicationName: APP_NAME,
   title: APP_NAME,
   description: APP_DESCRIPTION,
+  // Next only emits `mobile-web-app-capable`; iOS standalone + startup images need the Apple name.
+  other: {
+    "apple-mobile-web-app-capable": "yes",
+  },
+  icons: {
+    icon: [
+      {
+        url: "/pwa/manifest-icon-192.maskable.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/pwa/manifest-icon-512.maskable.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+    ],
+    apple: "/pwa/apple-icon-180.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: APP_NAME,
+    startupImage: appleSplashStartupImages,
   },
   formatDetection: {
     telephone: false,
