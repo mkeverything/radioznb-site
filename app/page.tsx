@@ -18,6 +18,7 @@ export default function Home() {
           height={5906}
           width={5906}
           alt="table"
+          loading="eager"
         />
       </div>
     </div>
@@ -37,6 +38,7 @@ const Desktop: FC<{ className: string }> = ({ className }) => {
           height={4216}
           width={4216}
           alt="about-us"
+          loading="eager"
         />
       </Link>
       <div className="flex w-full justify-center">
@@ -51,6 +53,7 @@ const Desktop: FC<{ className: string }> = ({ className }) => {
           className="h-42 w-auto transition hover:scale-105"
           height={2301}
           width={2301}
+          loading="eager"
           alt="tapes"
         />
       </Link>
@@ -61,7 +64,7 @@ const Desktop: FC<{ className: string }> = ({ className }) => {
 const Mobile: FC<{ className: string }> = ({ className }) => {
   return (
     <div className={`relative flex h-full w-full flex-col ${className}`}>
-      <div className="absolute inset-x-0 z-10 top-12 flex items-start justify-between gap-3 px-4">
+      <div className="absolute inset-x-0 top-12 z-10 flex items-start justify-between gap-3 px-4">
         <Link href={"/about"} className="w-[42%] max-w-42.5">
           <Image
             src={"/assets/about-us-mobile.png"}
@@ -69,6 +72,7 @@ const Mobile: FC<{ className: string }> = ({ className }) => {
             height={1816}
             width={2762}
             alt="about-us"
+            loading="eager"
           />
         </Link>
         <Link href={"/library"} className="mt-24 w-[50%] max-w-55">
@@ -78,6 +82,7 @@ const Mobile: FC<{ className: string }> = ({ className }) => {
             height={3107}
             width={3734}
             alt="tapes"
+            loading="eager"
           />
         </Link>
       </div>

@@ -35,7 +35,7 @@ const TapePlayer = () => {
       <div className="relative h-full w-full">
         <button
           onClick={onClick}
-          className="peer absolute z-100 m-auto h-[80%] w-[60%] cursor-pointer  max-sm:inset-0 sm:top-20 sm:left-44 sm:h-[20%] sm:w-[15%]"
+          className="peer absolute z-100 m-auto h-[80%] w-[60%] cursor-pointer max-sm:inset-0 sm:top-20 sm:left-44 sm:h-[20%] sm:w-[15%]"
         />
         <Image
           className="relative inset-0 z-10"
@@ -43,7 +43,7 @@ const TapePlayer = () => {
           alt="player"
           width={1366}
           height={768}
-          priority
+          loading="eager"
         />
         <div className="absolute top-[17%] left-[26.5%] h-9 w-2.5 bg-white" />
         <div className="absolute top-[27%] right-[28%] h-2 w-16 bg-white" />
@@ -54,6 +54,7 @@ const TapePlayer = () => {
           width={1366}
           height={768}
           alt="antenna"
+          loading="eager"
         />
         <Image
           className="absolute inset-0 -z-20 origin-bottom duration-100 peer-hover:scale-[1.01] peer-focus:scale-[1.01]"
@@ -61,6 +62,7 @@ const TapePlayer = () => {
           alt="fm"
           width={1366}
           height={768}
+          loading="eager"
         />
         <LiveIndicator />
         <Image
@@ -69,6 +71,7 @@ const TapePlayer = () => {
           width={1366}
           height={768}
           alt="gear-l"
+          loading="eager"
         />
         <Image
           className={`absolute right-[41.5%] bottom-[33%] z-10 size-5 ${isPlayingArchive && "animate-spin"}`}
@@ -76,6 +79,7 @@ const TapePlayer = () => {
           width={1366}
           height={768}
           alt="gear-r"
+          loading="eager"
         />
       </div>
     </div>
