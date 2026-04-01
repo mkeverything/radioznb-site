@@ -61,7 +61,7 @@ export const ProgramCircle: FC<
   )
   return (
     <div
-      className={`relative aspect-square size-24 overflow-hidden p-2 text-black sm:size-28 sm:text-base lg:size-32 lg:text-lg ${className}`}
+      className={`relative aspect-square size-32 overflow-hidden p-2 text-black sm:size-28 sm:text-base lg:size-32 lg:text-lg ${className}`}
       {...props}
     >
       <Image
@@ -71,7 +71,7 @@ export const ProgramCircle: FC<
         height={1254}
         alt={"circle"}
       />
-      <div className="absolute inset-0 z-10 flex size-full items-center justify-center overflow-hidden px-3 text-center text-wrap whitespace-break-spaces drop-shadow-[0_0_0.75px_rgba(0,0,0,0)]">
+      <div className="absolute inset-0 z-10 flex size-full text-xs sm:text-sm items-center justify-center overflow-hidden px-3 text-center text-wrap whitespace-break-spaces drop-shadow-[0_0_0.75px_rgba(0,0,0,0)]">
         {children}
       </div>
     </div>
