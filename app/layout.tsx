@@ -6,7 +6,6 @@ import QueryProvider from "@/components/QueryProvider"
 import { SerwistProvider } from "@/components/SerwistProvider"
 import { ThemeProvider } from "@/components/ThemeProvider"
 import type { Metadata, Viewport } from "next"
-import { Mynerve } from "next/font/google"
 import { appleSplashStartupImages } from "../lib/apple-splash-startup-images"
 import "./globals.css"
 
@@ -17,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" suppressHydrationWarning>
-      <body className={`${latinFont.variable} mb-34 min-h-dvh overflow-x-clip`}>
+      <body className="font-sans mb-34 min-h-dvh overflow-x-clip antialiased">
         <SerwistProvider swUrl="/serwist/sw.js">
           <QueryProvider>
             <PlayerContextProvider>
@@ -99,9 +98,3 @@ export const metadata: Metadata = {
   },
 }
 
-const latinFont = Mynerve({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-latin",
-  display: "swap",
-})
