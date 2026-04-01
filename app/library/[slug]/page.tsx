@@ -25,10 +25,12 @@ const Page: FC<{ params: Promise<{ slug: string }> }> = ({ params }) => {
         >
           ← все передачи
         </Link>
-        <div className="text-3xl font-bold uppercase">{programs.name}</div>
-        <span className="text-xl">{programs.description}</span>
+        <div className="break-words text-3xl font-bold uppercase">
+          {programs.name}
+        </div>
+        <span className="break-words text-xl">{programs.description}</span>
         {people?.name && (
-          <div className="text-2xl opacity-50">
+          <div className="break-words text-2xl opacity-50">
             передачу ведёт {people.name}
           </div>
         )}

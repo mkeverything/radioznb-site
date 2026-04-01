@@ -22,12 +22,12 @@ export default function RecordingComponent({
           isLive: false,
         })
       }}
-      className="flex gap-4 text-right text-2xl hover:underline"
+      className="flex w-full min-w-0 flex-col gap-1 text-left text-lg hover:underline sm:flex-row sm:items-end sm:gap-4 sm:text-right sm:text-2xl"
     >
-      <span className="flex items-end pb-1 text-sm">
+      <span className="shrink-0 text-xs opacity-70 sm:pb-1 sm:text-sm">
         {getRecordingSeasonEpisodeString(rec.recordings)}
       </span>
-      {rec.recordings.episodeTitle}
+      <span className="min-w-0 break-words">{rec.recordings.episodeTitle}</span>
     </button>
   )
 }

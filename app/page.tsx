@@ -63,9 +63,11 @@ const Desktop: FC<{ className: string }> = ({ className }) => {
 
 const Mobile: FC<{ className: string }> = ({ className }) => {
   return (
-    <div className={`relative flex h-full w-full flex-col ${className}`}>
-      <div className="absolute inset-x-0 top-12 z-10 flex items-start justify-between gap-3 px-4">
-        <Link href={"/about"} className="w-[42%] max-w-42.5">
+    <div
+      className={`relative flex h-full w-full flex-col justify-between px-4 pt-[max(3rem,env(safe-area-inset-top))] pb-[calc(env(safe-area-inset-bottom)+6.5rem)] ${className}`}
+    >
+      <div className="z-10 flex items-start justify-between gap-3">
+        <Link href={"/about"} className="w-[42%] max-w-40">
           <Image
             src={"/assets/about-us-mobile.png"}
             className="h-auto w-full transition hover:scale-105"
@@ -75,7 +77,10 @@ const Mobile: FC<{ className: string }> = ({ className }) => {
             loading="eager"
           />
         </Link>
-        <Link href={"/library"} className="mt-24 w-[50%] max-w-55">
+        <Link
+          href={"/library"}
+          className="mt-10 w-[46%] max-w-[11.5rem] self-end"
+        >
           <Image
             src={"/assets/tapes-mobile.png"}
             className="h-auto w-full transition hover:scale-105"
@@ -86,7 +91,7 @@ const Mobile: FC<{ className: string }> = ({ className }) => {
           />
         </Link>
       </div>
-      <div className="absolute right-0 bottom-24 left-0 mx-auto mt-16 flex w-full justify-center">
+      <div className="flex flex-1 items-center justify-center py-8">
         <TapePlayer />
       </div>
     </div>

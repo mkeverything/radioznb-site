@@ -75,14 +75,14 @@ const PageContent = () => {
           />
         </button>
       </div>
-      <div className="grid w-full grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+      <div className="grid w-full grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
         {programs.data?.map(({ programs: { id, name, slug } }) => (
           <button
             key={id}
             onClick={() => router.push(`/library/${slug}`)}
-            className={`hover:underline`}
+            className="flex justify-center hover:underline"
           >
-            <ProgramCircle className="flex items-center justify-center rounded-full font-bold">
+            <ProgramCircle className="rounded-full font-bold leading-tight break-words [text-wrap:balance]">
               {name}
             </ProgramCircle>
           </button>

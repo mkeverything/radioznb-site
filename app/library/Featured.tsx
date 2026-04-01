@@ -20,7 +20,7 @@ const Featured: FC<{
   return (
     <div className="flex w-full flex-col gap-4">
       <div className="text-4xl">премьера</div>
-      <div className="flex w-full gap-4">
+      <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-start">
         <button
           type="button"
           onClick={() =>
@@ -30,21 +30,21 @@ const Featured: FC<{
               isLive: false,
             })
           }
-          className="relative cursor-pointer text-left transition-all hover:scale-105"
+          className="relative w-fit shrink-0 cursor-pointer text-left transition-all hover:scale-105"
         >
           <div>
-            <div className="absolute inset-0 z-10 line-clamp-4 flex h-full flex-col items-start justify-between p-6 uppercase invert sm:p-8 sm:text-4xl">
-              <span className="pr-4 text-xs sm:text-lg">
+            <div className="absolute inset-0 z-10 flex h-full flex-col justify-between overflow-hidden p-4 uppercase invert sm:p-6">
+              <span className="line-clamp-2 pr-6 text-[0.65rem] leading-tight sm:text-base">
                 {featured.programs.name}
               </span>
-              <span className="text-xs sm:text-lg">
+              <span className="line-clamp-3 text-[0.65rem] leading-tight sm:text-base">
                 {featured.recordings.episodeTitle}
               </span>
             </div>
-            <RecordSquare type="podcast" className="w-36 sm:w-48" />
+            <RecordSquare type="podcast" className="w-28 sm:w-40 lg:w-48" />
           </div>
         </button>
-        <span className="max-w-1/2 text-xl text-wrap sm:text-2xl">
+        <span className="min-w-0 flex-1 text-base leading-tight break-words sm:max-w-[50%] sm:text-xl lg:text-2xl">
           <Link href={`/library/${featured.programs.slug}`}>
             {description || fallbackDescription}{" "}
           </Link>

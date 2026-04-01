@@ -18,7 +18,7 @@ export const RecordSquare: FC<
   )
   return (
     <div
-      className={`relative flex aspect-square max-sm:p-6 p-10 lg:p-8 text-xs text-wrap whitespace-break-spaces text-black sm:text-sm md:text-base ${className}`}
+      className={`relative flex aspect-square min-w-0 overflow-hidden p-6 text-xs text-wrap whitespace-break-spaces text-black sm:p-8 sm:text-sm lg:p-8 md:text-base ${className}`}
       {...props}
     >
       <Image
@@ -37,7 +37,7 @@ export const RecordSquare: FC<
           alt="podcast"
         />
       )}
-      <div className="flex size-full drop-shadow-[0_0_1px_white]">
+      <div className="flex size-full min-w-0 overflow-hidden drop-shadow-[0_0_1px_white]">
         {children}
       </div>
     </div>
@@ -57,7 +57,7 @@ export const ProgramCircle: FC<
   )
   return (
     <div
-      className={`relative aspect-square size-28 p-2 text-wrap whitespace-break-spaces text-black sm:size-32 sm:text-lg ${className}`}
+      className={`relative aspect-square size-24 overflow-hidden p-2 text-black sm:size-28 sm:text-base lg:size-32 lg:text-lg ${className}`}
       {...props}
     >
       <Image
@@ -67,7 +67,7 @@ export const ProgramCircle: FC<
         height={1254}
         alt={"circle"}
       />
-      <div className="absolute inset-0 z-10 m-auto flex size-fit h-fit items-center justify-center px-2 drop-shadow-[0_0_0.75px_rgba(0,0,0,0)]">
+      <div className="absolute inset-0 z-10 flex size-full items-center justify-center overflow-hidden px-3 text-center text-wrap whitespace-break-spaces drop-shadow-[0_0_0.75px_rgba(0,0,0,0)]">
         {children}
       </div>
     </div>
