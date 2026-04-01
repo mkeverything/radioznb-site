@@ -13,7 +13,7 @@ const PlayerBar = () => {
     <div
       className={`fixed right-0 bottom-0 left-0 z-50 m-auto flex w-full justify-center bg-white invert transition-all duration-300 dark:bg-black`}
     >
-      <div className="relative flex w-full min-h-8 items-stretch gap-2 px-4 py-2 max-sm:flex-col-reverse sm:min-h-10 sm:items-center sm:gap-3 sm:px-8">
+      <div className="relative flex w-full min-h-8 items-stretch gap-2 px-4 pt-2 pb-6 sm:py-2 max-sm:flex-col-reverse sm:min-h-10 sm:items-center sm:gap-3 sm:px-8">
         <Controls />
         <ProgressBar />
         <VolumeBar />
