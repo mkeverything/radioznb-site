@@ -1,6 +1,6 @@
 {
   "name": "radio-znb",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "scripts": {
     "dev": "bun --bun next dev",
     "build": "bun --bun next build",
