@@ -1,9 +1,8 @@
 "use client"
 
-import { RecordSquare } from "@/components/Cards"
 import { usePlayer } from "@/components/PlayerContext"
 import { Program, Recording } from "@/db/types"
-import Link from "next/link"
+import Image from "next/image"
 import { FC } from "react"
 
 const Featured: FC<{
@@ -12,43 +11,47 @@ const Featured: FC<{
   if (!featured) return null
 
   const description = featured.recordings.description?.trim()
-  const fallbackDescription = `${featured.programs.name} – ${featured.recordings.episodeTitle}`
 
   const { play } = usePlayer()
   const title = `${featured.programs.name} – ${featured.recordings.episodeTitle}`
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <div className="text-4xl">премьера</div>
-      <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-start">
-        <button
-          type="button"
-          onClick={() =>
-            play({
-              title,
-              src: featured.recordings.fileUrl,
-              isLive: false,
-            })
-          }
-          className="relative w-fit shrink-0 cursor-pointer text-left transition-all hover:scale-105"
-        >
-          <div>
-            <div className="absolute inset-0 z-10 flex h-full flex-col justify-between overflow-hidden p-4 uppercase invert sm:p-6">
-              <span className="line-clamp-2 pr-6 text-[0.65rem] leading-tight sm:text-base">
-                {featured.programs.name}
-              </span>
-              <span className="line-clamp-3 text-[0.65rem] leading-tight sm:text-base">
-                {featured.recordings.episodeTitle}
-              </span>
-            </div>
-            <RecordSquare type="podcast" className="w-28 sm:w-40 lg:w-48" />
+      <div className="flex items-center gap-2 text-xl font-semibold uppercase">
+        премьера{" "}
+        <Image
+          className="size-6"
+          src="/assets/podcast.png"
+          width={124}
+          height={124}
+          alt="podcast"
+        />
+      </div>
+      <div
+        onClick={() =>
+          play({
+            title,
+            src: featured.recordings.fileUrl,
+            isLive: false,
+          })
+        }
+        className="w-full rounded-xl cursor-pointer border border-2 border-white/90 p-4 text-left sm:p-6 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
+      >
+        <div className="flex flex-col gap-3 sm:gap-4">
+          <div className="flex min-w-0 flex-col gap-1 sm:gap-1.5">
+            <span className="text-sm font-medium uppercase tracking-wide text-white/85 sm:text-base">
+              {featured.programs.name}
+            </span>
+            <span className="text-balance text-3xl font-bold leading-[1.1] tracking-tight text-white sm:text-4xl lg:text-5xl">
+              {featured.recordings.episodeTitle}
+            </span>
           </div>
-        </button>
-        <span className="min-w-0 flex-1 text-base leading-tight break-words sm:max-w-[50%] sm:text-xl lg:text-2xl">
-          <Link href={`/library/${featured.programs.slug}`}>
-            {description || fallbackDescription}{" "}
-          </Link>
-        </span>
+          {description ? (
+            <p className="max-w-3xl text-base leading-relaxed text-white/90 sm:text-lg lg:text-xl">
+              {description}
+            </p>
+          ) : null}
+        </div>
       </div>
     </div>
   )
