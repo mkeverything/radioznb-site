@@ -1,5 +1,6 @@
 "use client"
 
+import Hls from "hls.js"
 import {
   createContext,
   FC,
@@ -22,6 +23,7 @@ const LIVE_FREEZE_THRESHOLD_MS = 12_000
 const LIVE_RECONNECT_ATTEMPT_CAP = 15
 
 const LOG_PREFIX = "[radioznb live]"
+const HLS_MIME_TYPE = "application/vnd.apple.mpegurl"
 
 function describeMediaError(audio: HTMLAudioElement): string {
   const err = audio.error
@@ -37,10 +39,12 @@ function describeMediaError(audio: HTMLAudioElement): string {
   return msg ? `${name}: ${msg}` : name
 }
 
-function liveUrlWithCacheBust(): string {
-  const sep = listenUrl.includes("?") ? "&" : "?"
-  return `${listenUrl}${sep}_=${Date.now()}`
+function withCacheBust(url: string): string {
+  const sep = url.includes("?") ? "&" : "?"
+  return `${url}${sep}_=${Date.now()}`
 }
+
+type LiveTransport = "hls" | "mp3"
 
 export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const [src, setSrc] = useState("")
@@ -49,27 +53,40 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const [timecode, setTimecode] = useState(defaultState.timecode)
   const [duration, setDuration] = useState(defaultState.duration)
   const [volume, setVolume] = useState(defaultState.volume)
-  const { livestream, nowPlaying } = useLivestreamStatus()
+  const { livestream, nowPlaying, streamSources } = useLivestreamStatus()
   const [isLive, setIsLive] = useState(!!livestream?.is_live)
   const [readyState, setReadyState] = useState(0)
   const ctx = isLive ? "player-context" : "archive-context"
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const hlsRef = useRef<Hls | null>(null)
   const wantsLivePlayRef = useRef(false)
   const isLiveRef = useRef(false)
+  const streamSourcesRef = useRef(streamSources)
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   )
   const reconnectAttemptsRef = useRef(0)
   const lastLiveCurrentTimeRef = useRef(0)
   const liveFrozenSinceRef = useRef<number | null>(null)
+  const liveTransportRef = useRef<LiveTransport | null>(null)
+  const liveAttemptTokenRef = useRef(0)
+  const ignoreLiveEventsUntilRef = useRef(0)
   const scheduleLiveReconnectRef = useRef<(reason: string) => void>(
     (_reason) => {},
+  )
+  const resetLiveConnectionRef = useRef<() => void>(() => {})
+  const startLivePlaybackRef = useRef<(reason: string) => Promise<boolean>>(
+    async (_reason) => false,
   )
 
   useEffect(() => {
     isLiveRef.current = isLive
   }, [isLive])
+
+  useEffect(() => {
+    streamSourcesRef.current = streamSources
+  }, [streamSources])
 
   useEffect(() => {
     const saved = getLocalStorageContext(ctx)
@@ -121,7 +138,176 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     let lastThrottle = 0
     const throttleMs = 1000
 
-    const runReconnect = () => {
+    const shouldIgnoreLiveEvent = () =>
+      performance.now() < ignoreLiveEventsUntilRef.current
+
+    const destroyHls = () => {
+      if (hlsRef.current) {
+        hlsRef.current.destroy()
+        hlsRef.current = null
+      }
+    }
+
+    const resetLiveConnection = (advanceToken = true) => {
+      ignoreLiveEventsUntilRef.current = performance.now() + 1500
+      if (advanceToken) {
+        liveAttemptTokenRef.current += 1
+      }
+      destroyHls()
+      audio.pause()
+      audio.removeAttribute("src")
+      audio.load()
+      setReadyState(0)
+    }
+
+    const isCurrentLiveAttempt = (token: number) =>
+      token === liveAttemptTokenRef.current &&
+      wantsLivePlayRef.current &&
+      isLiveRef.current
+
+    const getLiveCandidates = (): Array<{
+      transport: LiveTransport
+      url: string
+    }> => {
+      const { hlsEnabled, hlsUrl, mp3Url } = streamSourcesRef.current
+      if (liveTransportRef.current === "mp3") {
+        return [{ transport: "mp3", url: mp3Url }]
+      }
+
+      const candidates: Array<{ transport: LiveTransport; url: string }> = []
+      if (hlsEnabled && hlsUrl) {
+        candidates.push({ transport: "hls", url: hlsUrl })
+      }
+      candidates.push({ transport: "mp3", url: mp3Url })
+      return candidates
+    }
+
+    const connectDirectAudio = async (url: string, token: number) => {
+      resetLiveConnection(false)
+      audio.src = withCacheBust(url)
+      audio.load()
+      if (!isCurrentLiveAttempt(token)) return false
+      await audio.play()
+      return isCurrentLiveAttempt(token)
+    }
+
+    const connectHls = async (url: string, token: number) => {
+      // Prefer MSE + hls.js in Chromium: `canPlayType("…mpegurl")` is often "maybe"
+      // (truthy) even though <audio src=".m3u8"> cannot demux HLS — native path must
+      // only run when hls.js is unavailable (e.g. Safari without MSE).
+      if (Hls.isSupported()) {
+        resetLiveConnection(false)
+
+        return new Promise<boolean>((resolve) => {
+          let settled = false
+          const hls = new Hls({
+            enableWorker: true,
+            lowLatencyMode: true,
+          })
+
+          const finish = (result: boolean) => {
+            if (settled) return
+            settled = true
+            resolve(result)
+          }
+
+          const fail = (detail: unknown) => {
+            console.warn(LOG_PREFIX, "unable to start HLS stream:", detail)
+            if (hlsRef.current === hls) {
+              hlsRef.current = null
+            }
+            hls.destroy()
+            finish(false)
+          }
+
+          hlsRef.current = hls
+
+          hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+            if (!isCurrentLiveAttempt(token)) {
+              fail("stale HLS attach")
+              return
+            }
+            hls.loadSource(withCacheBust(url))
+          })
+
+          hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            if (!isCurrentLiveAttempt(token)) {
+              fail("stale HLS manifest")
+              return
+            }
+            void audio.play().then(
+              () => finish(isCurrentLiveAttempt(token)),
+              (error) => fail(error),
+            )
+          })
+
+          hls.on(Hls.Events.ERROR, (_event, data) => {
+            if (!data.fatal) return
+
+            const detail = `${data.type}: ${data.details}`
+            if (!settled) {
+              fail(detail)
+              return
+            }
+
+            console.warn(LOG_PREFIX, "fatal HLS playback error:", detail)
+            liveTransportRef.current = "mp3"
+            scheduleLiveReconnectRef.current(`fatal HLS error: ${detail}`)
+          })
+
+          try {
+            hls.attachMedia(audio)
+          } catch (error) {
+            fail(error)
+          }
+        })
+      }
+
+      if (audio.canPlayType(HLS_MIME_TYPE)) {
+        return connectDirectAudio(url, token)
+      }
+
+      return false
+    }
+
+    const startLivePlayback = async (reason: string) => {
+      if (!wantsLivePlayRef.current || !isLiveRef.current) return false
+
+      const token = liveAttemptTokenRef.current + 1
+      liveAttemptTokenRef.current = token
+      liveFrozenSinceRef.current = null
+      lastLiveCurrentTimeRef.current = 0
+
+      const candidates = getLiveCandidates()
+      for (const candidate of candidates) {
+        if (!isCurrentLiveAttempt(token)) return false
+        try {
+          const didStart =
+            candidate.transport === "hls"
+              ? await connectHls(candidate.url, token)
+              : await connectDirectAudio(candidate.url, token)
+
+          if (didStart) {
+            liveTransportRef.current = candidate.transport
+            setSrc(candidate.url)
+            return true
+          }
+        } catch (error) {
+          console.warn(
+            LOG_PREFIX,
+            `${candidate.transport} start failed during ${reason}:`,
+            error,
+          )
+        }
+      }
+
+      return false
+    }
+
+    resetLiveConnectionRef.current = () => resetLiveConnection()
+    startLivePlaybackRef.current = startLivePlayback
+
+    const runReconnect = async () => {
       if (!wantsLivePlayRef.current || !isLiveRef.current) return
       if (reconnectAttemptsRef.current >= LIVE_RECONNECT_ATTEMPT_CAP) {
         console.error(
@@ -140,14 +326,12 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
         "reconnect attempt",
         `${reconnectAttemptsRef.current}/${LIVE_RECONNECT_ATTEMPT_CAP}`,
         "→",
-        "new src",
+        liveTransportRef.current === "mp3" ? "mp3 only" : "prefer hls",
       )
-      audio.src = liveUrlWithCacheBust()
-      audio.load()
-      void audio.play().catch((e) => {
-        console.warn(LOG_PREFIX, "play() failed after reconnect:", e)
-        scheduleLiveReconnectRef.current("play() failed after reconnect")
-      })
+      const didStart = await startLivePlayback("reconnect")
+      if (!didStart && wantsLivePlayRef.current && isLiveRef.current) {
+        scheduleLiveReconnectRef.current("all live transports failed")
+      }
     }
 
     const scheduleLiveReconnect = (reason: string) => {
@@ -161,7 +345,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
       clearReconnectTimeout()
       reconnectTimeoutRef.current = setTimeout(() => {
         reconnectTimeoutRef.current = null
-        runReconnect()
+        void runReconnect()
       }, LIVE_RECONNECT_DEBOUNCE_MS)
     }
 
@@ -201,7 +385,15 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     }
 
     const onLoaded = () => {
-      setSrc(audio.src)
+      if (isLiveRef.current) {
+        const liveSrc =
+          liveTransportRef.current === "hls"
+            ? streamSourcesRef.current.hlsUrl ?? streamSourcesRef.current.mp3Url
+            : streamSourcesRef.current.mp3Url
+        setSrc(liveSrc)
+      } else {
+        setSrc(audio.src)
+      }
       setDuration(isFinite(audio.duration) ? audio.duration : 0)
       setReadyState(audio.readyState)
       if (isLiveRef.current) {
@@ -233,6 +425,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     }
 
     const onError = () => {
+      if (isLiveRef.current && shouldIgnoreLiveEvent()) return
       const detail = describeMediaError(audio)
       console.warn(LOG_PREFIX, "audio error:", detail, {
         networkState: audio.networkState,
@@ -245,6 +438,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
     const onStalled = () => {
       if (!isLiveRef.current || !wantsLivePlayRef.current) return
+      if (shouldIgnoreLiveEvent()) return
       console.warn(LOG_PREFIX, "stalled", {
         networkState: audio.networkState,
         readyState: audio.readyState,
@@ -276,6 +470,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
     return () => {
       clearReconnectTimeout()
+      resetLiveConnection()
       document.removeEventListener("visibilitychange", onVisible)
       audio.removeEventListener("timeupdate", onTimeUpdate)
       audio.removeEventListener("loadstart", onLoadStart)
@@ -306,15 +501,25 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     if (live) {
       wantsLivePlayRef.current = true
       isLiveRef.current = true
+      liveTransportRef.current = null
     } else {
       wantsLivePlayRef.current = false
       isLiveRef.current = false
+      liveTransportRef.current = null
       clearReconnectTimeout()
+      resetLiveConnectionRef.current()
     }
 
     audio.pause()
     if (live) {
-      audio.src = newSrc
+      setIsLive(true)
+      setTitle(title)
+      const didStart = await startLivePlaybackRef.current("play()")
+      if (!didStart && wantsLivePlayRef.current) {
+        console.warn(LOG_PREFIX, "initial live start failed")
+        scheduleLiveReconnectRef.current("initial live start failed")
+      }
+      return
     } else {
       if (audio.src !== newSrc) {
         audio.src = newSrc
@@ -342,7 +547,8 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     clearReconnectTimeout()
     const audio = audioRef.current
     if (!audio) return
-    audio.pause()
+    liveTransportRef.current = null
+    resetLiveConnectionRef.current()
   }
 
   const toggle = () => {

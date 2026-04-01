@@ -1,4 +1,6 @@
 import {
+  defaultLiveStreamSources,
+  LiveStreamSources,
   nowplayingApiUrl,
   nowplayingStaticUrl,
   nowplayingWebSocketUrl,
@@ -31,6 +33,7 @@ export type Livestream =
 type StationFeed = {
   livestream: Livestream
   nowPlaying: NowPlayingTrack | undefined
+  streamSources: LiveStreamSources
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60,10 +63,40 @@ export function formatNowPlayingLine(
   return null
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapStreamSourcesFromStation(raw: any): LiveStreamSources {
+  if (!raw || typeof raw !== "object") return defaultLiveStreamSources
+  const mp3Url =
+    typeof raw.listen_url === "string" && raw.listen_url
+      ? raw.listen_url
+      : defaultLiveStreamSources.mp3Url
+  const apiHlsUrl =
+    typeof raw.hls_url === "string" && raw.hls_url ? raw.hls_url : null
+
+  if (apiHlsUrl) {
+    return {
+      mp3Url,
+      hlsUrl: apiHlsUrl,
+      hlsEnabled: Boolean(raw.hls_enabled),
+    }
+  }
+  if (raw.hls_enabled === false) {
+    return { mp3Url, hlsUrl: null, hlsEnabled: false }
+  }
+  return {
+    mp3Url,
+    hlsUrl: defaultLiveStreamSources.hlsUrl,
+    hlsEnabled: defaultLiveStreamSources.hlsEnabled,
+  }
+}
+
 export const useLivestreamStatus = (): StationFeed => {
   const [livestream, setLivestream] = useState<Livestream>(undefined)
   const [nowPlaying, setNowPlaying] = useState<NowPlayingTrack | undefined>(
     undefined,
+  )
+  const [streamSources, setStreamSources] = useState<LiveStreamSources>(
+    defaultLiveStreamSources,
   )
 
   const ws = useWebSocket(nowplayingWebSocketUrl)
@@ -86,6 +119,7 @@ export const useLivestreamStatus = (): StationFeed => {
           setLivestream(data.live)
         }
         setNowPlaying(mapNowPlayingFromApi(data.now_playing))
+        setStreamSources(mapStreamSourcesFromStation(data.station))
       } catch (err) {
         console.error("Fetch error:", err)
       }
@@ -103,6 +137,7 @@ export const useLivestreamStatus = (): StationFeed => {
         if (data.live && "is_live" in data.live) {
           setLivestream(data.live)
         }
+        setStreamSources(mapStreamSourcesFromStation(data.station))
       } catch {
         /* ignore poll errors */
       }
@@ -131,5 +166,5 @@ export const useLivestreamStatus = (): StationFeed => {
     }
   }, [ws.lastJsonMessage])
 
-  return { livestream, nowPlaying }
+  return { livestream, nowPlaying, streamSources }
 }
