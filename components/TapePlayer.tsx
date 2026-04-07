@@ -4,26 +4,19 @@ import Image from "next/image"
 import LiveIndicator from "./LiveIndicator"
 import { stream, usePlayer } from "./PlayerContext"
 import WaveAnimation from "./Waves"
-import useArchiveStream from "./hooks/useArchiveRecord"
 
 const TapePlayer = () => {
-  const { setSrc, isPlaying, isLive, setIsLive, play, pause, readyState } =
-    usePlayer()
+  const { isPlaying, isLive, play, pause } = usePlayer()
   const isPlayingLive = isPlaying && isLive
   const isPlayingArchive = isPlaying && !isLive
-  const { src } = useArchiveStream()
 
   const onClick = () => {
-    if (isPlayingLive && readyState < 3) {
-      void play(stream)
-      return
-    }
-    if (isPlaying && readyState < 3) return
     if (isPlayingLive) {
       pause()
-      setSrc(src)
-      setIsLive(false)
-    } else play(stream)
+      return
+    }
+
+    void play(stream)
   }
 
   return (

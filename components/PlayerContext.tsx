@@ -540,6 +540,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     if (live) {
       setIsLive(true)
       setTitle(title)
+      setIsPlaying(true)
       const didStart = await startLivePlaybackRef.current("play()")
       if (!didStart && wantsLivePlayRef.current) {
         console.warn(LOG_PREFIX, "initial live start failed")
@@ -556,10 +557,12 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     }
     setIsLive(live)
     setTitle(title)
+    setIsPlaying(true)
 
     try {
       await audio.play()
     } catch (e) {
+      setIsPlaying(false)
       console.warn(LOG_PREFIX, "archive play() rejected:", e)
     }
   }
@@ -569,18 +572,29 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     clearReconnectTimeout()
     const audio = audioRef.current
     if (!audio) return
+    if (!isLiveRef.current && isFinite(audio.currentTime)) {
+      setTimecode(audio.currentTime)
+    }
+    setIsPlaying(false)
+    setReadyState(0)
     liveTransportRef.current = null
     resetLiveConnectionRef.current()
   }
 
   const toggle = () => {
-    const audio = audioRef.current
-    if (!audio) return
-    if (audio.paused) {
-      play({ src, title, isLive })
-    } else {
+    if (isPlaying || wantsLivePlayRef.current) {
       pause()
+      return
     }
+
+    if (!src) return
+
+    void play({
+      src,
+      title,
+      isLive,
+      ...(isLive ? {} : { timecode }),
+    })
   }
 
   const seek = (time: number) => {
@@ -591,6 +605,8 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
   }
 
   useMediaSessionSync(
+    src,
+    title,
     isLive,
     isPlaying,
     nowPlaying,

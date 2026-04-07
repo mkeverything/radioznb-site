@@ -38,18 +38,31 @@ function liveMediaFields(
   return { title, artist, album }
 }
 
+function archiveMediaFields(
+  currentTitle: string,
+  stationTitle: string,
+): { title: string; artist: string; album: string } {
+  return {
+    title: currentTitle.trim() || stationTitle.trim(),
+    artist: "",
+    album: "",
+  }
+}
+
 export function useMediaSessionSync(
+  src: string,
+  currentTitle: string,
   isLive: boolean,
   isPlaying: boolean,
   nowPlaying: NowPlayingTrack | undefined,
   livestream: Livestream,
   stationTitle: string,
-  playLive: () => void,
+  playCurrent: () => void,
   pause: () => void,
 ) {
-  const playRef = useRef(playLive)
+  const playRef = useRef(playCurrent)
   const pauseRef = useRef(pause)
-  playRef.current = playLive
+  playRef.current = playCurrent
   pauseRef.current = pause
 
   useEffect(() => {
@@ -57,21 +70,20 @@ export function useMediaSessionSync(
       return
     }
 
-    if (!isLive) {
+    if (!src) {
       navigator.mediaSession.metadata = null
       navigator.mediaSession.setActionHandler("play", null)
       navigator.mediaSession.setActionHandler("pause", null)
+      navigator.mediaSession.setActionHandler("stop", null)
       return
     }
 
-    const { title, artist, album } = liveMediaFields(
-      stationTitle,
-      nowPlaying,
-      livestream,
-    )
+    const { title, artist, album } = isLive
+      ? liveMediaFields(stationTitle, nowPlaying, livestream)
+      : archiveMediaFields(currentTitle, stationTitle)
 
     const artwork: MediaImage[] = []
-    const artUrl = nowPlaying?.art || livestream?.art
+    const artUrl = isLive ? nowPlaying?.art || livestream?.art : undefined
     if (artUrl) {
       artwork.push({
         src: artUrl,
@@ -95,10 +107,14 @@ export function useMediaSessionSync(
     navigator.mediaSession.setActionHandler("pause", () => {
       pauseRef.current()
     })
+    navigator.mediaSession.setActionHandler("stop", () => {
+      pauseRef.current()
+    })
 
     return () => {
       navigator.mediaSession.setActionHandler("play", null)
       navigator.mediaSession.setActionHandler("pause", null)
+      navigator.mediaSession.setActionHandler("stop", null)
     }
-  }, [isLive, isPlaying, nowPlaying, livestream, stationTitle])
+  }, [currentTitle, isLive, isPlaying, livestream, nowPlaying, src, stationTitle])
 }
