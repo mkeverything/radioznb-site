@@ -13,9 +13,9 @@ const Page = async () => {
   const data = await request.json()
 
   return (
-    <div className="flex size-full flex-col">
+    <div className="flex min-h-screen flex-col">
       <HomeButton />
-      <div className="flex flex-col items-center">
+      <div className="flex flex-1 flex-col items-center">
         <p className="max-w-lg p-4 text-xl text-pretty sm:p-12">
           {data.description}
         </p>
@@ -29,9 +29,10 @@ const Page = async () => {
           />
         </Link>
       </div>
-      <div className="fixed bottom-32 sm:bottom-16 right-0 pointer-events-none flex flex-col items-end p-8 text-xs opacity-10">
-        <p className="pointer-events-auto">{packageJson.version}</p>
-        <p className="pointer-events-auto">
+
+      <div className="flex flex-col items-end text-right text-xs opacity-10 mb-4">
+        <p>{packageJson.version}</p>
+        <p>
           <Link
             href="https://mkeverything.ru"
             className="underline underline-offset-2 hover:opacity-100"
