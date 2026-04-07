@@ -98,10 +98,6 @@ function buildAppleSplashStartupImages(): { url: string; media?: string }[] {
   for (const dims of orderedDims) {
     const device = SPLASH_BY_DIMS[dims]
     out.push({
-      url: `${PWA_BASE}/apple-splash-dark-${dims}${SPLASH_EXT}`,
-      media: `(prefers-color-scheme: dark) and (${device})`,
-    })
-    out.push({
       url: `${PWA_BASE}/apple-splash-${dims}${SPLASH_EXT}`,
       media: device,
     })

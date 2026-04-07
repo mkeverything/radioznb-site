@@ -40,10 +40,7 @@ const APP_DESCRIPTION = "зе бест рэдио ин зе ворлд."
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
-    { media: "(prefers-color-scheme: dark)", color: "#000000" },
-  ],
+  themeColor: "#fafafa",
   colorScheme: "light dark",
 }
 
