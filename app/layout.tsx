@@ -40,7 +40,10 @@ const APP_DESCRIPTION = "зе бест рэдио ин зе ворлд."
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#fafafa",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
   colorScheme: "light dark",
 }
 
@@ -48,6 +51,25 @@ export const metadata: Metadata = {
   applicationName: APP_NAME,
   title: APP_NAME,
   description: APP_DESCRIPTION,
+  icons: {
+    icon: [
+      {
+        url: "/icons/manifest-icon-192.maskable.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/icons/manifest-icon-512.maskable.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+    ],
+    apple: {
+      url: "/icons/apple-icon-180.png",
+      sizes: "180x180",
+      type: "image/png",
+    },
+  },
   // Next only emits `mobile-web-app-capable`; iOS standalone + startup images need the Apple name.
   other: {
     "apple-mobile-web-app-capable": "yes",

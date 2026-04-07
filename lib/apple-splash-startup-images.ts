@@ -1,9 +1,14 @@
-/** Apple launch images in `public/pwa` (`apple-splash-{dims}.jpeg`), with media from device specs. */
+/**
+ * Apple launch images in `public/pwa`:
+ * - Light: `apple-splash-{dims}.jpg`
+ * - Dark (system prefers dark): `apple-splash-dark-{dims}.jpg`
+ * Dark entries use `(prefers-color-scheme: dark)` so they line up with iOS appearance; light uses device `media` only as fallback for `no-preference`.
+ */
 
 const PWA_BASE = "/pwa"
-const SPLASH_EXT = ".jpeg"
+const SPLASH_EXT = ".jpg"
 
-/** Pixel dimensions `WxH` for each file `apple-splash-{dims}.jpeg` under `public/pwa`. */
+/** Pixel dimensions `WxH` for each splash asset pair under `public/pwa`. */
 const SPLASH_BY_DIMS: Record<string, string> = {
   "1125-2436":
     "(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
@@ -91,10 +96,14 @@ function buildAppleSplashStartupImages(): { url: string; media?: string }[] {
   const orderedDims = Object.keys(SPLASH_BY_DIMS)
   const out: { url: string; media?: string }[] = []
   for (const dims of orderedDims) {
-    const base = SPLASH_BY_DIMS[dims]
+    const device = SPLASH_BY_DIMS[dims]
+    out.push({
+      url: `${PWA_BASE}/apple-splash-dark-${dims}${SPLASH_EXT}`,
+      media: `(prefers-color-scheme: dark) and (${device})`,
+    })
     out.push({
       url: `${PWA_BASE}/apple-splash-${dims}${SPLASH_EXT}`,
-      media: base,
+      media: device,
     })
   }
   return out
