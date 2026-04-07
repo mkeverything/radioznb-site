@@ -52,18 +52,6 @@ export const metadata: Metadata = {
   title: APP_NAME,
   description: APP_DESCRIPTION,
   icons: {
-    icon: [
-      {
-        url: "/icons/manifest-icon-192.maskable.png",
-        sizes: "192x192",
-        type: "image/png",
-      },
-      {
-        url: "/icons/manifest-icon-512.maskable.png",
-        sizes: "512x512",
-        type: "image/png",
-      },
-    ],
     apple: {
       url: "/icons/apple-icon-180.png",
       sizes: "180x180",
