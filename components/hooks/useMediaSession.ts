@@ -5,7 +5,9 @@ import type { Livestream, NowPlayingTrack } from "./useLivestreamStatus"
 
 /**
  * Map live metadata to MediaMetadata for lock screen / Bluetooth / car displays.
- * `title`: radio name · playlist · `artist`: artist — track (third field unused).
+ *
+ * - Live with a streamer name: `title` = radio · host (nothing else).
+ * - Otherwise: `title` = radio · playlist, `artist` = artist — title (now playing).
  */
 function liveMediaFields(
   stationTitle: string,
@@ -24,9 +26,13 @@ function liveMediaFields(
         ""
       : ""
 
+  if (streamer) {
+    const title = [radio, streamer].filter(Boolean).join(" · ")
+    return { title, artist: "", album: "" }
+  }
+
   const title = [radio, playlist].filter(Boolean).join(" · ")
-  const trackLine = [songArtist, songTitle].filter(Boolean).join(" — ")
-  const artist = trackLine || streamer || ""
+  const artist = [songArtist, songTitle].filter(Boolean).join(" — ")
   const album = ""
 
   return { title, artist, album }
