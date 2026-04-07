@@ -164,6 +164,14 @@ export const useLivestreamStatus = (): StationFeed => {
         JSON.stringify(prev) !== JSON.stringify(np) ? np : prev,
       )
     }
+
+    const station = npRoot.station
+    if (station && typeof station === "object") {
+      const sources = mapStreamSourcesFromStation(station)
+      setStreamSources((prev) =>
+        JSON.stringify(prev) !== JSON.stringify(sources) ? sources : prev,
+      )
+    }
   }, [ws.lastJsonMessage])
 
   return { livestream, nowPlaying, streamSources }

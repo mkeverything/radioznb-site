@@ -1,6 +1,6 @@
 "use client"
 
-import Hls from "hls.js"
+import type Hls from "hls.js"
 import {
   createContext,
   FC,
@@ -45,6 +45,12 @@ function withCacheBust(url: string): string {
 }
 
 type LiveTransport = "hls" | "mp3"
+
+let _hlsModuleP: Promise<typeof import("hls.js")> | null = null
+async function getHlsCtor() {
+  if (!_hlsModuleP) _hlsModuleP = import("hls.js")
+  return (await _hlsModuleP).default
+}
 
 export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const [src, setSrc] = useState("")
@@ -192,9 +198,8 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     }
 
     const connectHls = async (url: string, token: number) => {
-      // Prefer MSE + hls.js in Chromium: `canPlayType("…mpegurl")` is often "maybe"
-      // (truthy) even though <audio src=".m3u8"> cannot demux HLS — native path must
-      // only run when hls.js is unavailable (e.g. Safari without MSE).
+      // Prefer MSE + hls.js; native <audio> HLS only when MSE is unavailable (Safari).
+      const Hls = await getHlsCtor()
       if (Hls.isSupported()) {
         resetLiveConnection(false)
 
@@ -203,6 +208,11 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
           const hls = new Hls({
             enableWorker: true,
             lowLatencyMode: true,
+            maxBufferLength: 10,
+            maxMaxBufferLength: 30,
+            backBufferLength: 5,
+            liveSyncDurationCount: 3,
+            liveMaxLatencyDurationCount: 6,
           })
 
           const finish = (result: boolean) => {
@@ -241,6 +251,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
             )
           })
 
+          let recovered = false
           hls.on(Hls.Events.ERROR, (_event, data) => {
             if (!data.fatal) return
 
@@ -250,7 +261,21 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
               return
             }
 
-            console.warn(LOG_PREFIX, "fatal HLS playback error:", detail)
+            if (!recovered) {
+              recovered = true
+              if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                console.warn(LOG_PREFIX, "fatal network error, attempting recovery:", detail)
+                hls.startLoad()
+                return
+              }
+              if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+                console.warn(LOG_PREFIX, "fatal media error, attempting recovery:", detail)
+                hls.recoverMediaError()
+                return
+              }
+            }
+
+            console.warn(LOG_PREFIX, "unrecoverable HLS error:", detail)
             liveTransportRef.current = "mp3"
             scheduleLiveReconnectRef.current(`fatal HLS error: ${detail}`)
           })
@@ -439,6 +464,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     const onStalled = () => {
       if (!isLiveRef.current || !wantsLivePlayRef.current) return
       if (shouldIgnoreLiveEvent()) return
+      if (liveTransportRef.current === "hls") return
       console.warn(LOG_PREFIX, "stalled", {
         networkState: audio.networkState,
         readyState: audio.readyState,
@@ -534,11 +560,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     try {
       await audio.play()
     } catch (e) {
-      if (live) {
-        console.warn(LOG_PREFIX, "play() rejected:", e)
-        if (wantsLivePlayRef.current)
-          scheduleLiveReconnectRef.current("play() rejected (e.g. autoplay policy)")
-      }
+      console.warn(LOG_PREFIX, "archive play() rejected:", e)
     }
   }
 
