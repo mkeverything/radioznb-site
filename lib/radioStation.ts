@@ -1,6 +1,6 @@
 /** AzuraCast public origin (no trailing slash). */
 export const AZURACAST_ORIGIN = "https://server.radioznb.ru" as const
-const PROD = false
+const PROD = process.env.NODE_ENV === "production"
 
 const wsOrigin = AZURACAST_ORIGIN.replace(/^https/, "wss")
 export const nowplayingWebSocketUrl = `${wsOrigin}/api/live/nowplaying/websocket`
