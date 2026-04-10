@@ -32,5 +32,14 @@ export const nowplayingStaticUrl = `${AZURACAST_ORIGIN}/api/nowplaying_static/${
 export const nowplayingApiUrl = `${AZURACAST_ORIGIN}/api/nowplaying/${STATION_SHORTCODE}`
 export const stationRestUrl = `${AZURACAST_ORIGIN}/api/station/${STATION_SHORTCODE}`
 
+/** Numeric AzuraCast station id for `/api/station/{id}/…` (default `1`). Set `AZURACAST_STATION_ID` to override. */
+export const azuracastStationNumericId = process.env.AZURACAST_STATION_ID ?? "1"
+
+export const stationPlaylistsApiUrl = `${AZURACAST_ORIGIN}/api/station/${azuracastStationNumericId}/playlists`
+
+export function stationPlaylistApiUrl(playlistId: number | string): string {
+  return `${AZURACAST_ORIGIN}/api/station/${azuracastStationNumericId}/playlist/${playlistId}`
+}
+
 /** WebSocket subscription key for Centrifugo / now-playing feed. */
 export const wsStationChannel = `station:${STATION_SHORTCODE}`

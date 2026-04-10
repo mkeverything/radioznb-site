@@ -3,6 +3,7 @@
   "version": "0.2.3",
   "scripts": {
     "dev": "bun --bun next dev",
+    "dev:weights": "bun run scripts/dev-weights-update.ts",
     "build": "bun --bun next build",
     "start": "bun --bun next start",
     "lint": "bun --bun next lint"
