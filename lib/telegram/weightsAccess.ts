@@ -7,10 +7,16 @@ export type TelegramUserRef = {
 }
 
 /**
- * `TELEGRAM_WEIGHTS_ADMINS` — comma- or whitespace-separated entries.
- * Purely numeric tokens → user id; anything else → username (optional `@`, case-insensitive).
+ * Comma- or whitespace-separated entries (optional `@`).
+ * Purely numeric tokens → user id; anything else → username (case-insensitive).
+ *
+ * Env (use either or both, merged):
+ * - `TELEGRAM_WEIGHTS_ADMINS`
+ * - `TELEGRAM_ADMINS`
  *
  * Example: `123456789 @alice bob`
+ *
+ * Note: если у человека в Telegram **нет @username**, по имени в списке он **не** совпадёт — добавьте его **числовой id**.
  */
 function parseWeightsAdmins(raw: string | undefined): {
   ids: Set<number>
@@ -30,30 +36,34 @@ function parseWeightsAdmins(raw: string | undefined): {
   return { ids, usernames }
 }
 
-const { ids: WEIGHTS_ACCESS_USER_IDS, usernames: WEIGHTS_ACCESS_USERNAMES } =
-  parseWeightsAdmins(process.env.TELEGRAM_ADMINS)
+function mergedAdminsRaw(): string {
+  return [process.env.TELEGRAM_WEIGHTS_ADMINS, process.env.TELEGRAM_ADMINS]
+    .filter(Boolean)
+    .join(" ")
+    .trim()
+}
 
 let warnedEmptyConfig = false
 
 export function canUseWeightsCommands(from: TelegramUserRef | undefined | null): boolean {
   if (!from || from.is_bot) return false
 
-  const configured =
-    WEIGHTS_ACCESS_USER_IDS.size > 0 || WEIGHTS_ACCESS_USERNAMES.size > 0
+  const { ids: allowIds, usernames: allowNames } = parseWeightsAdmins(mergedAdminsRaw() || undefined)
+  const configured = allowIds.size > 0 || allowNames.size > 0
   if (!configured) {
     if (!warnedEmptyConfig) {
       warnedEmptyConfig = true
       console.warn(
-        "[telegram weightsAccess] TELEGRAM_WEIGHTS_ADMINS is empty — /weights is denied for everyone"
+        "[telegram weightsAccess] TELEGRAM_WEIGHTS_ADMINS / TELEGRAM_ADMINS empty — /weights denied for everyone"
       )
     }
     return false
   }
 
-  if (WEIGHTS_ACCESS_USER_IDS.has(from.id)) return true
+  if (allowIds.has(from.id)) return true
 
   const uname = from.username?.toLowerCase()
-  if (uname && WEIGHTS_ACCESS_USERNAMES.has(uname)) return true
+  if (uname && allowNames.has(uname)) return true
 
   return false
 }
