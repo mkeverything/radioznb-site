@@ -1,14 +1,22 @@
-const BOT_TOKEN = process.env.BOT_TOKEN!
-const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`
-
 type TelegramApiResponse = { ok: boolean; description?: string }
+
+function telegramApiBaseUrl(): string | null {
+  const t = process.env.BOT_TOKEN?.trim()
+  return t ? `https://api.telegram.org/bot${t}` : null
+}
 
 export type InlineKeyboardMarkup = {
   inline_keyboard: { text: string; callback_data: string }[][]
 }
 
 async function sendMessagePayload(payload: Record<string, unknown>): Promise<TelegramApiResponse> {
-  const res = await fetch(`${TELEGRAM_API}/sendMessage`, {
+  const base = telegramApiBaseUrl()
+  if (!base) {
+    console.error("[telegram] BOT_TOKEN is missing or empty — cannot call sendMessage")
+    return { ok: false, description: "BOT_TOKEN missing" }
+  }
+
+  const res = await fetch(`${base}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -20,12 +28,13 @@ async function sendMessagePayload(payload: Record<string, unknown>): Promise<Tel
   return data
 }
 
-export async function answerCallbackQuery(
-  callbackQueryId: string,
-  text?: string,
-  showAlert = false
-) {
-  await fetch(`${TELEGRAM_API}/answerCallbackQuery`, {
+export async function answerCallbackQuery(callbackQueryId: string, text?: string, showAlert = false) {
+  const base = telegramApiBaseUrl()
+  if (!base) {
+    console.error("[telegram] BOT_TOKEN is missing or empty — cannot answerCallbackQuery")
+    return
+  }
+  await fetch(`${base}/answerCallbackQuery`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
