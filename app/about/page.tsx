@@ -19,7 +19,7 @@ const Page = async () => {
         <p className="max-w-lg p-4 text-xl text-pretty sm:p-12">
           {data.description}
         </p>
-        <Link href="https://t.me/radi0ZnB">
+        <Link href="https://t.me/radioznb">
           <Image
             className="size-24 transition-all hover:scale-105"
             width={166}
