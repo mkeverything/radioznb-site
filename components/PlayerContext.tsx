@@ -96,6 +96,8 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
   }, [streamSources])
 
   useEffect(() => {
+    if (wantsLivePlayRef.current) return
+
     const saved = getLocalStorageContext(ctx)
 
     if (!saved) return
@@ -445,6 +447,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     const onPlay = () => {
       setIsPlaying(true)
       if (isLiveRef.current) {
+        setIsPlayerBarVisible(true)
         reconnectAttemptsRef.current = 0
         liveFrozenSinceRef.current = null
         lastLiveCurrentTimeRef.current = audio.currentTime

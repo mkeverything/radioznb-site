@@ -41,6 +41,7 @@ const APP_DESCRIPTION = "зе бест рэдио ин зе ворлд."
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
   themeColor: "#fafafa",
   colorScheme: "light dark",
 }

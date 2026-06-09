@@ -11,11 +11,9 @@ function TitleRow({ children }: PropsWithChildren) {
 
   return (
     <div className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4">
-      {!isLive && (
-        <div className="hidden shrink-0 sm:block">
-          <Controls />
-        </div>
-      )}
+      <div className="hidden shrink-0 sm:block">
+        <Controls liveOnly={isLive} />
+      </div>
       <div className="min-w-0 flex-1">{children}</div>
       {!isLive && (
         <div className="shrink-0 sm:hidden">
