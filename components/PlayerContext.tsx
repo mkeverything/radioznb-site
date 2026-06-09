@@ -59,6 +59,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const [timecode, setTimecode] = useState(defaultState.timecode)
   const [duration, setDuration] = useState(defaultState.duration)
   const [volume, setVolume] = useState(defaultState.volume)
+  const [isPlayerBarVisible, setIsPlayerBarVisible] = useState(false)
   const { livestream, nowPlaying, streamSources } = useLivestreamStatus()
   const [isLive, setIsLive] = useState(!!livestream?.is_live)
   const [readyState, setReadyState] = useState(0)
@@ -343,6 +344,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
         )
         wantsLivePlayRef.current = false
         setIsPlaying(false)
+        setIsPlayerBarVisible(false)
         return
       }
       reconnectAttemptsRef.current += 1
@@ -541,6 +543,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
       setIsLive(true)
       setTitle(title)
       setIsPlaying(true)
+      setIsPlayerBarVisible(true)
       const didStart = await startLivePlaybackRef.current("play()")
       if (!didStart && wantsLivePlayRef.current) {
         console.warn(LOG_PREFIX, "initial live start failed")
@@ -558,6 +561,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     setIsLive(live)
     setTitle(title)
     setIsPlaying(true)
+    setIsPlayerBarVisible(true)
 
     try {
       await audio.play()
@@ -576,6 +580,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
       setTimecode(audio.currentTime)
     }
     setIsPlaying(false)
+    setIsPlayerBarVisible(!isLiveRef.current)
     setReadyState(0)
     liveTransportRef.current = null
     resetLiveConnectionRef.current()
@@ -638,6 +643,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
         readyState,
         livestream,
         nowPlaying,
+        isPlayerBarVisible,
       }}
     >
       {children}
@@ -672,6 +678,7 @@ const defaultState: PlayerContextType = {
     streamer_name: "",
   },
   nowPlaying: undefined,
+  isPlayerBarVisible: false,
 }
 
 const PlayerContext = createContext<PlayerContextType>(defaultState)
@@ -715,4 +722,5 @@ export type PlayerContextType = {
   readyState: number
   livestream: Livestream
   nowPlaying: NowPlayingTrack | undefined
+  isPlayerBarVisible: boolean
 }

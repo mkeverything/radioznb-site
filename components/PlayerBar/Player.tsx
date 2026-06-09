@@ -1,14 +1,18 @@
 "use client"
 
+import { usePathname } from "next/navigation"
 import Controls from "./Controls"
 import { usePlayer } from "../PlayerContext"
 import ProgressBar from "./ProgressBar"
 import VolumeBar from "./VolumeBar"
 
 const PlayerBar = () => {
-  const { src } = usePlayer()
+  const pathname = usePathname()
+  const { isLive, isPlayerBarVisible, src } = usePlayer()
+  const isLibraryRoute = pathname === "/library" || pathname.startsWith("/library/")
+  const shouldShow = src && (isPlayerBarVisible || (!isLive && isLibraryRoute))
 
-  if (!src) return null
+  if (!shouldShow) return null
   return (
     <div
       className={`fixed right-0 bottom-0 left-0 z-50 m-auto flex w-full justify-center bg-white invert transition-all duration-300 dark:bg-black`}

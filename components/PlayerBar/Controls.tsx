@@ -5,6 +5,8 @@ const Controls = () => {
   const { isPlaying, toggle, isLive, play, livestream } = usePlayer()
   const icon = isPlaying ? "pause" : "play"
 
+  if (isLive) return null
+
   return (
     <div className="relative flex w-full items-center justify-center gap-4 max-sm:flex-row-reverse sm:w-32 sm:justify-start">
       <button onClick={toggle} className="size-6 sm:size-8">
