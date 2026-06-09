@@ -10,17 +10,15 @@ function TitleRow({ children }: PropsWithChildren) {
   const { isLive } = usePlayer()
 
   return (
-    <div className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4">
-      <div className="hidden shrink-0 sm:block">
+    <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+      <div className="hidden shrink-0 items-center sm:flex">
         <Controls liveOnly={isLive} />
       </div>
       <div className="min-w-0 flex-1">{children}</div>
-      {!isLive && (
-        <div className="shrink-0 sm:hidden">
-          <Controls />
-        </div>
-      )}
-      <VolumeBar className="hidden shrink-0 sm:block" />
+      <div className="flex shrink-0 items-center sm:hidden">
+        <Controls liveOnly={isLive} />
+      </div>
+      {!isLive && <VolumeBar className="hidden shrink-0 sm:block" />}
     </div>
   )
 }
@@ -143,26 +141,15 @@ function ArchiveSeekBar() {
   )
 }
 
-const archiveProgressClass =
-  "flex h-16 w-full min-w-0 flex-1 flex-col justify-center gap-1 overflow-x-hidden sm:h-20"
-
-const liveProgressClass =
-  "flex w-full min-w-0 flex-1 flex-col justify-center gap-0.5 overflow-visible sm:gap-1"
+const progressAreaClass =
+  "flex h-full w-full min-w-0 flex-1 flex-col justify-center gap-0.5 overflow-hidden sm:gap-1"
 
 const ProgressBar = () => {
   const { isLive } = usePlayer()
 
-  if (isLive) {
-    return (
-      <div className={liveProgressClass}>
-        <LiveNowPlaying />
-      </div>
-    )
-  }
-
   return (
-    <div className={archiveProgressClass}>
-      <ArchiveSeekBar />
+    <div className={progressAreaClass}>
+      {isLive ? <LiveNowPlaying /> : <ArchiveSeekBar />}
     </div>
   )
 }
