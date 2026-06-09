@@ -12,6 +12,15 @@ body {
   max-width: 100%;
 }
 
+html:has(.home-page),
+body:has(.home-page) {
+  overflow-y: hidden;
+}
+
+body:has(.home-page) {
+  margin-bottom: 0;
+}
+
 button {
   cursor: pointer;
   transition: transform 0.15s ease-in-out;

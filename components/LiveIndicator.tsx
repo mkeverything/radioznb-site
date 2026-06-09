@@ -2,11 +2,11 @@ import Image from 'next/image'
 import { usePlayer } from './PlayerContext'
 
 const LiveIndicator = () => {
-	const { isLive, isPlaying, livestream } = usePlayer()
-	const isBlinking = livestream?.is_live && !isLive
-	const isVisible = isBlinking || (isLive && isPlaying)
+	const { isLive, livestream } = usePlayer()
+	const isLiveOnAir = livestream?.is_live || 1
+	const isBlinking = isLiveOnAir && !isLive
 
-	if (!isVisible) return null
+	// if (!isLiveOnAir) return null
 	return (
 		<div className={`${isBlinking && 'animate-blink'} absolute top-0 z-10`}>
 			<Image

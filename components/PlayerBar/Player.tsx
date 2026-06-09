@@ -1,10 +1,9 @@
 "use client"
 
 import { usePathname } from "next/navigation"
-import Controls from "./Controls"
 import { usePlayer } from "../PlayerContext"
 import ProgressBar from "./ProgressBar"
-import VolumeBar from "./VolumeBar"
+import Controls from "./Controls"
 
 const PlayerBar = () => {
   const pathname = usePathname()
@@ -15,12 +14,15 @@ const PlayerBar = () => {
   if (!shouldShow) return null
   return (
     <div
-      className={`fixed right-0 bottom-0 left-0 z-50 m-auto flex w-full justify-center bg-white invert transition-all duration-300 dark:bg-black`}
+      className={`fixed right-0 bottom-0 left-0 z-50 m-auto flex w-full justify-center overflow-visible bg-white invert dark:bg-black`}
     >
-      <div className="relative flex w-full min-h-8 items-stretch gap-2 px-4 pt-2 pb-6 sm:py-2 max-sm:flex-col-reverse sm:min-h-10 sm:items-center sm:gap-3 sm:px-8">
-        <Controls />
+      <div className="relative flex min-h-20 w-full items-center gap-3 overflow-visible px-4 py-1.5 sm:gap-4 sm:px-8 sm:py-2">
         <ProgressBar />
-        <VolumeBar />
+        {isLive && (
+          <div className="flex shrink-0 self-center">
+            <Controls liveOnly />
+          </div>
+        )}
       </div>
     </div>
   )

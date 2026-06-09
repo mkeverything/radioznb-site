@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" suppressHydrationWarning>
-      <body className="font-sans mb-34 min-h-dvh overflow-x-clip antialiased">
+      <body className="font-sans mb-20 min-h-dvh overflow-x-clip antialiased">
         <SerwistProvider swUrl="/serwist/sw.js">
           <QueryProvider>
             <PlayerContextProvider>

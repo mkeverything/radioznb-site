@@ -9,7 +9,7 @@ export const nowplayingWebSocketUrl = `${wsOrigin}/api/live/nowplaying/websocket
  * Station shortcode — single switch between `radioznb-live` and `radioznb-soundchecks`.
  * Override per deploy: `NEXT_PUBLIC_RADIOZNB_STATION_SHORTCODE=radioznb-live`
  */
-export const STATION_SHORTCODE = PROD ? "radioznb-live" : "radioznb-soundchecks"
+export const STATION_SHORTCODE = PROD ? "radioznb-live" : "radioznb-live"
 
 export const listenUrl = `${AZURACAST_ORIGIN}/listen/${STATION_SHORTCODE}/radio.mp3`
 

@@ -1,15 +1,17 @@
 import Image from "next/image"
 import { stream, usePlayer } from "../PlayerContext"
 
-const Controls = () => {
+type ControlsProps = {
+  liveOnly?: boolean
+}
+
+const Controls = ({ liveOnly = false }: ControlsProps) => {
   const { isPlaying, toggle, isLive, play, livestream } = usePlayer()
   const icon = isPlaying ? "pause" : "play"
 
-  if (isLive) return null
-
-  return (
-    <div className="relative flex w-full items-center justify-center gap-4 max-sm:flex-row-reverse sm:w-32 sm:justify-start">
-      <button onClick={toggle} className="size-6 sm:size-8">
+  if (liveOnly || isLive) {
+    return (
+      <button onClick={toggle} className="size-5">
         <Image
           className="h-full w-full"
           width={354}
@@ -18,9 +20,23 @@ const Controls = () => {
           alt="play"
         />
       </button>
-      {!isLive && livestream?.is_live && (
+    )
+  }
+
+  return (
+    <div className="flex shrink-0 items-center gap-2 max-sm:flex-row-reverse sm:gap-2.5">
+      <button onClick={toggle} className="size-5">
+        <Image
+          className="h-full w-full"
+          width={354}
+          height={354}
+          src={`/assets/${icon}-sm.png`}
+          alt="play"
+        />
+      </button>
+      {livestream?.is_live && (
         <button
-          className={`absolute -bottom-2 -left-2 size-12 p-2 sm:static`}
+          className="size-8 p-1"
           onClick={() => play(stream)}
           title={`в эфире ${livestream.streamer_name}!`}
         >
@@ -36,11 +52,5 @@ const Controls = () => {
     </div>
   )
 }
-
-// export const streamArchive = {
-// 	title: `моковая архивная запись – орфей`,
-// 	src: `https://orfeyfm.hostingradio.ru:8034/orfeyfm128.mp3`,
-// 	isLive: false,
-// }
 
 export default Controls

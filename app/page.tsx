@@ -7,7 +7,7 @@ import { FC } from "react"
 
 export default function Home() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center">
+    <div className="home-page fixed inset-0 flex items-center justify-center overflow-hidden">
       <Desktop className="max-sm:hidden" />
       <Mobile className="sm:hidden" />
       <div className="fixed inset-0">
@@ -64,7 +64,7 @@ const Desktop: FC<{ className: string }> = ({ className }) => {
 const Mobile: FC<{ className: string }> = ({ className }) => {
   return (
     <div
-      className={`relative flex h-full w-full flex-col justify-between px-4 pt-[max(3rem,env(safe-area-inset-top))] pb-[calc(env(safe-area-inset-bottom)+6.5rem)] ${className}`}
+      className={`relative flex h-full w-full flex-col justify-between px-4 pt-[max(3rem,env(safe-area-inset-top))] pb-[calc(env(safe-area-inset-bottom)+4.75rem)] ${className}`}
     >
       <div className="z-10 flex items-start justify-between gap-3">
         <Link href={"/about"} className="w-[42%] max-w-40">

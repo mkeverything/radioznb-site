@@ -14,8 +14,8 @@ const VolumeBar: FC<{ className?: string }> = ({ className }) => {
 	}
 
 	return (
-		<div className={`${className} ml-4 max-lg:hidden`}>
-			<div className={`relative`}>
+		<div className={`overflow-visible ${className ?? ''}`}>
+			<div className="relative overflow-visible">
 				{visible && (
 					<input
 						type='range'
@@ -26,12 +26,12 @@ const VolumeBar: FC<{ className?: string }> = ({ className }) => {
 						style={{ writingMode: 'vertical-lr', direction: 'rtl' }}
 						{...commonProps}
 						onChange={(e) => setVolume(parseFloat(e.target.value))}
-						className='volume-slider transition-all duration-700 absolute bottom-full left-0 right-0 accent-stone-800 dark:accent-black'
+						className='volume-slider absolute bottom-full left-1/2 z-[60] mb-1 h-24 w-6 -translate-x-1/2 accent-stone-800 transition-all duration-700 dark:accent-black'
 					/>
 				)}
 				<button {...commonProps} onClick={() => setVolume(volume > 0 ? 0 : 1)}>
 					<Image
-						className='h-8 w-auto'
+						className='h-6 w-auto'
 						src={`/assets/speaker${getVolumeIcon(volume)}.png`}
 						width={515}
 						height={310}
