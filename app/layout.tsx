@@ -7,6 +7,7 @@ import { SerwistProvider } from "@/components/SerwistProvider"
 import { ThemeProvider } from "@/components/ThemeProvider"
 import type { Metadata, Viewport } from "next"
 import { appleSplashStartupImages } from "../lib/apple-splash-startup-images"
+import { pwaIconSrc } from "@/lib/pwa-assets"
 import "./globals.css"
 
 export default function RootLayout({
@@ -50,7 +51,7 @@ export const metadata: Metadata = {
   description: APP_DESCRIPTION,
   icons: {
     apple: {
-      url: "/icons/apple-icon-180.png",
+      url: pwaIconSrc("/icons/apple-icon-180.png"),
       sizes: "180x180",
       type: "image/png",
     },

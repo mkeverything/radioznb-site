@@ -1,4 +1,8 @@
+import { pwaIconSrc } from "@/lib/pwa-assets"
 import type { MetadataRoute } from "next"
+
+const icon192 = pwaIconSrc("/icons/manifest-icon-192.maskable.png")
+const icon512 = pwaIconSrc("/icons/manifest-icon-512.maskable.png")
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -12,25 +16,25 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: "any",
     icons: [
       {
-        src: "/icons/manifest-icon-192.maskable.png",
+        src: icon192,
         sizes: "192x192",
         type: "image/png",
         purpose: "maskable",
       },
       {
-        src: "/icons/manifest-icon-512.maskable.png",
+        src: icon512,
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
       },
       {
-        src: "/icons/manifest-icon-192.maskable.png",
+        src: icon192,
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icons/manifest-icon-512.maskable.png",
+        src: icon512,
         sizes: "512x512",
         type: "image/png",
         purpose: "any",

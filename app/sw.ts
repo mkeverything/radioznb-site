@@ -13,8 +13,6 @@ declare global {
 
 declare const self: ServiceWorkerGlobalScope
 
-const version = "1.0.0"
-
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
   skipWaiting: true,
