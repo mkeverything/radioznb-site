@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import { usePlayer } from "../PlayerContext"
+import Controls from "./Controls"
 import ProgressBar from "./ProgressBar"
 import VolumeBar from "./VolumeBar"
 
@@ -22,6 +23,11 @@ const PlayerBar = () => {
     >
       <div className="relative flex h-20 w-full items-center gap-3 overflow-visible px-4 sm:gap-4 sm:px-8">
         <ProgressBar />
+        {isLive && (
+          <div className="flex shrink-0 self-center sm:hidden">
+            <Controls liveOnly />
+          </div>
+        )}
         {isLive && (
           <VolumeBar className="hidden shrink-0 self-center sm:block" />
         )}

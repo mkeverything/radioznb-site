@@ -15,9 +15,11 @@ function TitleRow({ children }: PropsWithChildren) {
         <Controls liveOnly={isLive} />
       </div>
       <div className="min-w-0 flex-1">{children}</div>
-      <div className="flex shrink-0 items-center sm:hidden">
-        <Controls liveOnly={isLive} />
-      </div>
+      {!isLive && (
+        <div className="flex shrink-0 items-center sm:hidden">
+          <Controls />
+        </div>
+      )}
       {!isLive && <VolumeBar className="hidden shrink-0 sm:block" />}
     </div>
   )
