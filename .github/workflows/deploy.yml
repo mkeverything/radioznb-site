@@ -66,4 +66,4 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
           ssh -o BatchMode=yes "${SSH_USER}@${SSH_HOST}" \
-            "bash -l -c 'cd ~/radioznb && bun install && bun --bun run build && (pm2 restart radioznb || pm2 start ecosystem.config.js)'"
+            "bash -l -c 'cd ~/radioznb && bun install && GIT_COMMIT_SHA=${{ github.sha }} bun --bun run build && (pm2 restart radioznb || pm2 start ecosystem.config.js)'"

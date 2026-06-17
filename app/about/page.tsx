@@ -30,8 +30,13 @@ const Page = async () => {
         </Link>
       </div>
 
-      <div className="flex absolute right-8 bottom-8 flex-col items-end text-right text-xs opacity-10 mb-4">
-        <p>{packageJson.version}</p>
+      <div className="flex absolute right-8 bottom-8 flex-col items-end text-right text-xs opacity-25 mb-4">
+        <p>
+          {packageJson.version}
+          {process.env.GIT_COMMIT_SHA
+            ? ` — ${process.env.GIT_COMMIT_SHA}`
+            : null}
+        </p>
         <p>
           <Link
             href="https://mkeverything.ru"

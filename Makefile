@@ -48,7 +48,7 @@ install-deps:
 # build on server with memory constraints
 build-remote:
 	@echo "🔨 building on server (memory-optimized)..."
-	@$(REMOTE_CMD) "cd ~/radioznb && bun --bun run build"'
+	@$(REMOTE_CMD) "cd ~/radioznb && GIT_COMMIT_SHA=$(shell git rev-parse --short HEAD) bun --bun run build"'
 
 # main deploy: sync code, install deps if needed, build on server, restart
 deploy: check-deps sync-code
