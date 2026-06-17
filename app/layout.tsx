@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" suppressHydrationWarning>
-      <body className="font-sans mb-20 min-h-dvh overflow-x-clip antialiased">
+      <body className="min-h-dvh overflow-x-clip pb-32 font-sans antialiased">
         <SerwistProvider swUrl="/serwist/sw.js">
           <QueryProvider>
             <PlayerContextProvider>
@@ -57,7 +57,6 @@ export const metadata: Metadata = {
       type: "image/png",
     },
   },
-  // Next only emits `mobile-web-app-capable`; iOS standalone + startup images need the Apple name.
   other: {
     "apple-mobile-web-app-capable": "yes",
   },
@@ -91,4 +90,3 @@ export const metadata: Metadata = {
     follow: true,
   },
 }
-

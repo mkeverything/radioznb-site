@@ -13,7 +13,7 @@ const Page = async () => {
   const data = await request.json()
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex h-full flex-col">
       <HomeButton />
       <div className="flex flex-1 flex-col items-center">
         <p className="max-w-lg p-4 text-xl text-pretty sm:p-12">
@@ -30,7 +30,7 @@ const Page = async () => {
         </Link>
       </div>
 
-      <div className="flex flex-col items-end text-right text-xs opacity-10 mb-4">
+      <div className="flex absolute right-8 bottom-8 flex-col items-end text-right text-xs opacity-10 mb-4">
         <p>{packageJson.version}</p>
         <p>
           <Link
