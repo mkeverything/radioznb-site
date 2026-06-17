@@ -24,6 +24,8 @@ const LIVE_RECONNECT_ATTEMPT_CAP = 15
 
 const LOG_PREFIX = "[radioznb live]"
 const HLS_MIME_TYPE = "application/vnd.apple.mpegurl"
+const LIVE_CONTEXT_KEY = "player-context"
+const ARCHIVE_CONTEXT_KEY = "archive-context"
 
 function describeMediaError(audio: HTMLAudioElement): string {
   const err = audio.error
@@ -63,10 +65,11 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const { livestream, nowPlaying, streamSources } = useLivestreamStatus()
   const [isLive, setIsLive] = useState(!!livestream?.is_live)
   const [readyState, setReadyState] = useState(0)
-  const ctx = isLive ? "player-context" : "archive-context"
+  const ctx = isLive ? LIVE_CONTEXT_KEY : ARCHIVE_CONTEXT_KEY
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const hlsRef = useRef<Hls | null>(null)
+  const didRestoreLocalStateRef = useRef(false)
   const wantsLivePlayRef = useRef(false)
   const isLiveRef = useRef(false)
   const streamSourcesRef = useRef(streamSources)
@@ -96,11 +99,12 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
   }, [streamSources])
 
   useEffect(() => {
-    if (wantsLivePlayRef.current) return
+    if (didRestoreLocalStateRef.current) return
+    didRestoreLocalStateRef.current = true
 
-    const saved = getLocalStorageContext(ctx)
+    const saved = getLocalStorageContext(ARCHIVE_CONTEXT_KEY)
 
-    if (!saved) return
+    if (!saved || saved.isLive) return
 
     setSrc(saved.src)
     setTitle(saved.title)
@@ -108,7 +112,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
     setDuration(saved.duration)
     setIsLive(saved.isLive)
     setVolume(saved.volume)
-  }, [ctx])
+  }, [])
 
   useEffect(() => {
     localStorage.setItem(
@@ -554,12 +558,16 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
       }
       return
     } else {
+      const nextTimecode =
+        storedTimecode ?? (src === newSrc ? timecode : defaultState.timecode)
+
       if (audio.src !== newSrc) {
         audio.src = newSrc
       }
-      if (storedTimecode) {
-        audio.currentTime = storedTimecode
-      } else if (src === newSrc) audio.currentTime = timecode
+      audio.currentTime = nextTimecode
+      setSrc(newSrc)
+      setTimecode(nextTimecode)
+      setDuration(defaultState.duration)
     }
     setIsLive(live)
     setTitle(title)
