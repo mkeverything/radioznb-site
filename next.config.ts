@@ -13,9 +13,6 @@ function shortCommitSha(): string {
 }
 
 const nextConfig: NextConfig = {
-  experimental: {
-    viewTransition: true,
-  },
   env: {
     GIT_COMMIT_SHA: shortCommitSha(),
   },
