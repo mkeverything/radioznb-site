@@ -11,13 +11,17 @@ const Page = async () => {
     },
   })
   const data = await request.json()
+  const description =
+    typeof data.description === "string"
+      ? data.description.replace(/радио[\s\-]+станция/g, "радиостанция")
+      : data.description
 
   return (
     <div className="flex h-full flex-col">
       <HomeButton />
       <div className="flex flex-1 flex-col items-center">
         <p className="max-w-lg p-4 text-xl text-pretty sm:p-12">
-          {data.description}
+          {description}
         </p>
         <Link href="https://t.me/radioznb">
           <Image
